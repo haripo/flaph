@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Fluid graph drawing toolkit",
   "main": "src/index.ts",
+  "repository": "https://github.com/haripo/flaph",
   "scripts": {
     "dev": "webpack-dev-server",
     "test": "echo \"Error: no test specified\" && exit 1"

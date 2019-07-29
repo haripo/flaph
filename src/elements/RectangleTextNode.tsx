@@ -12,7 +12,7 @@ export default function RectangleTextNode(props: Props) {
 
   return (
     <g
-      transform={ `translate(${node.layout.x}, ${node.layout.y})` }
+      transform={ `translate(${node.layout.x - node.layout.width / 2}, ${node.layout.y - node.layout.height / 2})` }
       key={ node.id }
     >
       <rect

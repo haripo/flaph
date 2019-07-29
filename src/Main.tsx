@@ -47,6 +47,28 @@ const originalNodes: Node[] = [
       width: 100,
       height: 200,
     }
+  },
+  {
+    id: '4',
+    contents: {
+      title: 'hotg',
+      body: 'fuga'
+    },
+    layout: {
+      width: 100,
+      height: 200,
+    }
+  },
+  {
+    id: '5',
+    contents: {
+      title: 'hotg',
+      body: 'fuga'
+    },
+    layout: {
+      width: 100,
+      height: 200,
+    }
   }
 ];
 
@@ -68,9 +90,12 @@ function renderGraph(dag: Node[]) {
   }
 
   graph.setEdge('1', '2');
+  graph.setEdge('3', '2');
+  graph.setEdge('2', '4');
+  graph.setEdge('4', '5');
   dagre.layout(graph);
 
-  return graph.nodes()
+  const nodes = graph.nodes()
     .map(v => graph.node(v))
     .map(v => {
       const node = dag.find(node => node.id === v.id);
@@ -83,11 +108,21 @@ function renderGraph(dag: Node[]) {
         }
       };
     });
+  const edges = graph.edges()
+    .map(e => {
+      return {
+        from: e.v,
+        to: e.w,
+        points: graph.edge(e).points
+      }
+    });
+  return { nodes, edges }
 }
 
 export default function Main() {
   const [strNodes, setNodes] = useState(JSON.stringify(originalNodes));
   const nodes = JSON.parse(strNodes);
+  const rendered = renderGraph(nodes);
 
   return (
     <div style={ {
@@ -106,7 +141,7 @@ export default function Main() {
       />
       <svg width='100%' height='100%'>
         {
-          renderGraph(nodes).map(node => (
+          rendered.nodes.map(node => (
             <RectangleTextNode
               key={ node.id }
               node={ node }
@@ -117,6 +152,26 @@ export default function Main() {
               } }
             />
           ))
+        }
+        {
+          rendered.edges.map(edge => {
+            let a = [];
+            const points = edge.points;
+            for (let i = 0; i < points.length - 1; i++) {
+              a.push(
+                <line
+                  key={ edge.from + edge.to + i }
+                  x1={ points[i].x }
+                  y1={ points[i].y }
+                  x2={ points[i + 1].x }
+                  y2={ points[i + 1].y }
+                  stroke={ 'red' }
+                  strokeWidth={ 1 }
+                />
+              );
+            }
+            return a;
+          })
         }
       </svg>
     </div>
