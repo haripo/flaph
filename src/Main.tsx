@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import RectangleTextNode from './elements/RectangleTextNode';
+import Graph from './Graph';
 import dagre from 'dagre';
 
 export type Node = {
@@ -119,10 +119,28 @@ function renderGraph(dag: Node[]) {
   return { nodes, edges }
 }
 
+function parse(text: string) {
+  try {
+    return {
+      succeeded: true,
+      result: JSON.parse(text)
+    };
+  } catch (e) {
+    return {
+      succeeded: false,
+      result: ''
+    };
+  }
+}
+
+function revParse(body: any) {
+  return JSON.stringify(body, null, 2)
+}
+
 export default function Main() {
-  const [strNodes, setNodes] = useState(JSON.stringify(originalNodes));
-  const nodes = JSON.parse(strNodes);
-  const rendered = renderGraph(nodes);
+  const [strNodes, setNodes] = useState(JSON.stringify(originalNodes, null, 2));
+  const { result: nodes, succeeded } = parse(strNodes);
+  const rendered = succeeded ? renderGraph(nodes) : { nodes: [], edges: [] };
 
   return (
     <div style={ {
@@ -135,45 +153,23 @@ export default function Main() {
         value={ strNodes }
         onChange={ e => setNodes(e.target.value) }
         style={ {
-          width: 200,
-          height: 600
+          width: 600,
+          height: '100%'
         } }
       />
-      <svg width='100%' height='100%'>
-        {
-          rendered.nodes.map(node => (
-            <RectangleTextNode
-              key={ node.id }
-              node={ node }
-              onChange={ node => {
-                const i = nodes.findIndex(n => n.id === node.id);
-                const newNodes = Object.assign([], nodes, { [i]: node });
-                setNodes(JSON.stringify(newNodes));
-              } }
-            />
-          ))
-        }
-        {
-          rendered.edges.map(edge => {
-            let a = [];
-            const points = edge.points;
-            for (let i = 0; i < points.length - 1; i++) {
-              a.push(
-                <line
-                  key={ edge.from + edge.to + i }
-                  x1={ points[i].x }
-                  y1={ points[i].y }
-                  x2={ points[i + 1].x }
-                  y2={ points[i + 1].y }
-                  stroke={ 'red' }
-                  strokeWidth={ 1 }
-                />
-              );
-            }
-            return a;
-          })
-        }
-      </svg>
+      {
+        succeeded ? (
+        <Graph
+          graph={ rendered }
+          onNodeChange={ node => {
+            const i = nodes.findIndex(n => n.id === node.id);
+            const newNodes = Object.assign([], nodes, { [i]: node });
+            setNodes(revParse(newNodes));
+          }}
+        />
+      ) : (
+        <div>parse error</div>
+      )}
     </div>
   )
 }
