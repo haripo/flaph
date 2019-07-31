@@ -19,7 +19,7 @@ module.exports = {
       },
       {
         test: /\.pegjs$/,
-        use: 'pegjs-loader?trace=true',
+        use: 'pegjs-loader?trace=true&cache=true',
       },
     ]
   },

@@ -7,7 +7,7 @@ export type Node = {
   id: string,
   param: {
     body?: { value: string, start: number, end: number },
-    to?: string,
+    to?: { value: string, start: number, end: number },
     width?: string,
     height?: string
   }
@@ -43,9 +43,8 @@ function renderGraph(dag: Node[]) {
   graph.setDefaultEdgeLabel(((v, w) => {
     return {}
   }));
-  // graph.setDefaultNodeLabel((v) => { return {} });
 
-  console.log(dag);
+  console.info('rendered dag', dag);
 
   for (let node of dag) {
     graph.setNode(node.id, {
@@ -54,12 +53,15 @@ function renderGraph(dag: Node[]) {
       width: parseInt(node.param.width || '100'),
       height: parseInt(node.param.height || '100'),
     });
+
+    // for (let to of node.param.to) {
+    //   graph.setEdge(node.id, to);
+    // }
+    if (node.param.to) {
+      graph.setEdge(node.id, node.param.to.value);
+    }
   }
 
-  graph.setEdge('1', '2');
-  // graph.setEdge('3', '2');
-  // graph.setEdge('2', '4');
-  // graph.setEdge('4', '5');
   dagre.layout(graph);
 
   const nodes: RenderedNode[] = graph.nodes()
@@ -90,8 +92,12 @@ function renderGraph(dag: Node[]) {
   return { nodes, edges }
 }
 
-function revParse(body: any) {
-  return JSON.stringify(body, null, 2)
+function revParse(id: any, key: any, body: any, node: Node, strNodes: string) {
+  let newNodes = strNodes;
+  if (key === 'body') {
+    newNodes = strNodes.slice(0, node.param.body.start) + body + strNodes.slice(node.param.body.end)
+  }
+  return newNodes;
 }
 
 export default function Main() {
@@ -120,11 +126,7 @@ export default function Main() {
           graph={ rendered }
           onNodeChange={ ({ id, key, body }) => {
             const node = nodes.find(n => n.id === id);
-            if (key === 'body') {
-              console.log(body);
-              const newNodes = strNodes.slice(0, node.param.body.start) + body + strNodes.slice(node.param.body.end)
-              setNodes(newNodes);
-            }
+            setNodes(revParse(id, key, body, node, strNodes));
           }}
         />
       ) : (
