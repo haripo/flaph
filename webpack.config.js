@@ -11,16 +11,20 @@ module.exports = {
     rules: [
       {
         test: /\.[jt]sx?$/,
-        use: 'babel-loader',
+        use: 'babel-loader'
       },
       {
         test: /\.tsx?$/,
         use: 'ts-loader'
-      }
+      },
+      {
+        test: /\.pegjs$/,
+        use: 'pegjs-loader?trace=true',
+      },
     ]
   },
   resolve: {
-    extensions: ['.ts', '.tsx', '.js']
+    extensions: ['.ts', '.tsx', '.js', '.pegjs']
   },
   devServer: {
     contentBase: path.join(__dirname, 'public'),

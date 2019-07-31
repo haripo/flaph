@@ -1,10 +1,10 @@
 import React from 'react';
 import RectangleTextNode from './elements/RectangleTextNode';
-import { Node } from './Main';
+import { RenderedNode } from './Main';
 
 type Props = {
-  graph: { nodes: Node[], edges: any[] },
-  onNodeChange: (target: Node) => void
+  graph: { nodes: RenderedNode[], edges: any[] },
+  onNodeChange: ({ id, key, body }) => void
 }
 
 export default function Graph(props: Props) {

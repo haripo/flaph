@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Node } from '../Main';
+import { RenderedNode } from '../Main';
 
 type Props = {
-  node: Node,
-  onChange: (node: Node) => void
+  node: RenderedNode,
+  onChange: (text: string) => void
 }
 
 export default function EditableText(props: Props) {
@@ -14,15 +14,9 @@ export default function EditableText(props: Props) {
     return (
       <foreignObject width={ node.layout.width } height={ node.layout.height }>
         <input
-          defaultValue={ node.contents.title }
+          defaultValue={ node.contents.body }
           onChange={ e => {
-            props.onChange({
-              ...node,
-              contents: {
-                ...node.contents,
-                title: e.target.value
-              }
-            });
+            props.onChange(e.target.value);
           } }
           onBlur={ e => setIsEditing(false) }
           style={ {
@@ -42,7 +36,7 @@ export default function EditableText(props: Props) {
           textAnchor="middle"
           dominantBaseline="central"
         >
-          { node.contents.title }
+          { node.contents.body }
         </text>
       </svg>
     )

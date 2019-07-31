@@ -5,6 +5,7 @@
   "main": "src/index.ts",
   "repository": "https://github.com/haripo/flaph",
   "scripts": {
+    "build": "webpack --config webpack.config.js",
     "dev": "webpack-dev-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,9 +19,12 @@
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-react": "^7.0.0",
     "@types/dagre": "^0.7.42",
+    "@types/pegjs": "^0.10.1",
     "@types/react": "^16.8.23",
     "@types/react-dom": "^16.8.5",
     "babel-loader": "^8.0.6",
+    "pegjs-loader": "^0.5.5",
+    "raw-loader": "^3.1.0",
     "ts-loader": "^6.0.4",
     "typescript": "^3.5.3",
     "webpack": "^4.38.0",
@@ -29,6 +33,7 @@
   },
   "dependencies": {
     "dagre": "^0.8.4",
+    "pegjs": "^0.11.0-master",
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
   }

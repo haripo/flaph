@@ -1,10 +1,10 @@
 import React from 'react';
-import { Node } from '../Main';
+import { RenderedNode } from '../Main';
 import EditableText from './EditableText';
 
 type Props = {
-  node: Node,
-  onChange: (node: Node) => void
+  node: RenderedNode,
+  onChange: ({id, key, body}) => void
 }
 
 export default function RectangleTextNode(props: Props) {
@@ -24,7 +24,10 @@ export default function RectangleTextNode(props: Props) {
         fill={ 'none' }
       >
       </rect>
-      <EditableText node={ node } onChange={ props.onChange } />
+      <EditableText
+        node={ node }
+        onChange={ text => props.onChange({ id: node.id, key: 'body', body: text }) }
+      />
     </g>
   )
 }
