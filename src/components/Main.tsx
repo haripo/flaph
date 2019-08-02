@@ -3,8 +3,7 @@ import Graph from './graph/Graph';
 import { parse, patch } from '../documenters/simple';
 import { layout } from '../designers/dagre';
 
-const defaultSource = `
-1: {
+const defaultSource = `1: {
   body: jjjjj
   to: 2
 }
@@ -21,28 +20,33 @@ export default function Main() {
     <div style={ {
       display: 'flex',
       flexDirection: 'row',
-      width: '100%',
-      height: '100%'
+      padding: 20
     } }>
       <textarea
         value={ source }
         onChange={ e => setSource(e.target.value) }
         style={ {
           width: 600,
-          height: '100%'
+          padding: 8,
+          fontFamily: 'monaco',
+          fontSize: 16
         } }
       />
-      {
-        parseResult.status === 'succeeded' ? (
-        <Graph
-          layout={ layout(parseResult.model) }
-          onNodeChange={ ({ patchRequest }) => {
-            setSource(patch(source, patchRequest, parseResult.sourceMap));
-          }}
-        />
-      ) : (
-        <div>parse error</div>
-      )}
+      <div style={{
+        marginLeft: 20,
+      }}>
+        {
+          parseResult.status === 'succeeded' ? (
+          <Graph
+            layout={ layout(parseResult.model) }
+            onNodeChange={ ({ patchRequest }) => {
+              setSource(patch(source, patchRequest, parseResult.sourceMap));
+            }}
+          />
+        ) : (
+          <div>parse error</div>
+        )}
+      </div>
     </div>
   )
 }
