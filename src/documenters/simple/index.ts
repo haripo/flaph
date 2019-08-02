@@ -31,7 +31,6 @@ function arrayToObject(key: string, value: string, array: any[]) {
 export function parse(graphSource: string): ParseResult {
   try {
     const parsed = peg.parse(graphSource, { tracer: new Tracer() });
-
     return {
       status: 'succeeded',
       model: parsed.map(e => ({

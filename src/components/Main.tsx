@@ -3,7 +3,7 @@ import Graph from './graph/Graph';
 import { parse, patch } from '../documenters/simple';
 import { layout } from '../designers/dagre';
 
-const originalNodes = `
+const defaultSource = `
 1: {
   body: jjjjj
   to: 2
@@ -14,8 +14,8 @@ const originalNodes = `
 `;
 
 export default function Main() {
-  const [strNodes, setNodes] = useState(originalNodes);
-  const parseResult = parse(strNodes);
+  const [source, setSource] = useState(defaultSource);
+  const parseResult = parse(source);
 
   return (
     <div style={ {
@@ -25,8 +25,8 @@ export default function Main() {
       height: '100%'
     } }>
       <textarea
-        value={ strNodes }
-        onChange={ e => setNodes(e.target.value) }
+        value={ source }
+        onChange={ e => setSource(e.target.value) }
         style={ {
           width: 600,
           height: '100%'
@@ -37,7 +37,7 @@ export default function Main() {
         <Graph
           layout={ layout(parseResult.model) }
           onNodeChange={ ({ patchRequest }) => {
-            setNodes(patch(strNodes, patchRequest, parseResult.sourceMap));
+            setSource(patch(source, patchRequest, parseResult.sourceMap));
           }}
         />
       ) : (
