@@ -44,8 +44,6 @@ export default function ResizeKnob(props: Props): JSX.Element {
     }
   }
 
-  console.log(startPosition);
-
   return (
     <React.Fragment>
       {

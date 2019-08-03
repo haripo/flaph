@@ -9,7 +9,12 @@ export type ModelElement = {
 }
 
 export type GraphSourceMap = {
-  [key: string]: { start: number, end: number }
+  [elementId: string]: {
+    [key: string]: {
+      start: number,
+      end: number
+    }
+  }
 }
 
 export type Layout = LayoutElement[]
