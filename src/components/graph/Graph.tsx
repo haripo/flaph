@@ -16,7 +16,7 @@ function renderNode(element: BoxLayoutElement, onChange: PatchRequestHandler) {
       onChange={ (e) => onChange({
         patchRequest: {
           elementId: element.id,
-          patch: { 'body': e }
+          patch: e
         }
       }) }
     />

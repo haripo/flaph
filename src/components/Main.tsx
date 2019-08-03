@@ -4,11 +4,29 @@ import { parse, patch } from '../documenters/simple';
 import { layout } from '../designers/dagre';
 
 const defaultSource = `1: {
-  body: jjjjj
+  body: Node1
   to: 2
 }
 2: {
-  body: iiii
+  body: Node2
+}
+3: {
+  body: Node3Node3Node3Node3
+  to: 2
+}
+4: {
+  body: Node4
+  to: 3
+}
+5: {
+  body: Node5
+  width: 200
+}
+6: {
+  body: Node6
+  to:4
+  width: 50
+  height: 200
 }
 `;
 
@@ -20,6 +38,7 @@ export default function Main() {
     <div style={ {
       display: 'flex',
       flexDirection: 'row',
+      flex: 1,
       padding: 20
     } }>
       <textarea
@@ -34,6 +53,7 @@ export default function Main() {
       />
       <div style={{
         marginLeft: 20,
+        flex: 1
       }}>
         {
           parseResult.status === 'succeeded' ? (

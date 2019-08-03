@@ -49,14 +49,14 @@ export function parse(graphSource: string): ParseResult {
 }
 
 export function patch(source: string, request: PatchRequest, sourceMap: any): string {
+  let patchSlideSize = 0;
   for (let [key, patch] of Object.entries(request.patch)) {
-    if (key === 'body') {
-      source =
-        source.slice(0, sourceMap[request.elementId][key].start)
-        + patch
-        + source.slice(sourceMap[request.elementId][key].end)
-    }
-    // TODO: patch したら start, end がずれる
+    const { start, end } = sourceMap[request.elementId][key];
+    source =
+      source.slice(0, start + patchSlideSize)
+      + patch
+      + source.slice(end + patchSlideSize)
+    patchSlideSize += patch.length - (end - start);
   }
   return source;
 }
