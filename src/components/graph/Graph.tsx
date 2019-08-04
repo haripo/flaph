@@ -1,6 +1,6 @@
 import React from 'react';
 import RectangleTextNode from './RectangleTextNode';
-import { Layout, PatchRequest, LayoutElement, BoxLayoutElement, PathLayoutElement } from '../../types';
+import { Layout, BoxLayoutElement, PathLayoutElement } from '../../types';
 
 type PatchRequestHandler = ({ patchRequest: PatchRequest }) => void;
 type Props = {
@@ -34,7 +34,7 @@ function renderEdge(element: PathLayoutElement, onChange: PatchRequestHandler) {
         y1={points[i].y}
         x2={points[i + 1].x}
         y2={points[i + 1].y}
-        stroke={'red'}
+        stroke={'black'}
         strokeWidth={1}
       />
     );
