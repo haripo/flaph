@@ -29,7 +29,12 @@ export default function EditableText(props: Props) {
     )
   } else {
     return (
-      <svg onClick={ e => setIsEditing(true) }>
+      <svg
+        onClick={ e => setIsEditing(true) }
+        style={{
+          userSelect: 'none'
+        }}
+      >
         <text
           x={ props.width / 2 }
           y={ props.height / 2 }
