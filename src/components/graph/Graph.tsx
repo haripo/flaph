@@ -1,6 +1,7 @@
 import React from 'react';
 import RectangleTextNode from './RectangleTextNode';
 import { Layout, BoxLayoutElement, PathLayoutElement } from '../../types';
+import Resizable from './Resizeable';
 
 type PatchRequestHandler = ({ patchRequest: PatchRequest }) => void;
 type Props = {
@@ -9,17 +10,31 @@ type Props = {
 }
 
 function renderNode(element: BoxLayoutElement, onChange: PatchRequestHandler) {
+  const { x, y, width, height } = element.location;
   return (
-    <RectangleTextNode
+    <Resizable
       key={element.id}
-      node={element}
+      x={ x - width / 2 }
+      y={ y - height / 2 }
+      width={ width }
+      height={ height }
       onChange={ (e) => onChange({
         patchRequest: {
           elementId: element.id,
           patch: e
         }
       }) }
-    />
+    >
+      <RectangleTextNode
+        node={element}
+        onChange={ (e) => onChange({
+          patchRequest: {
+            elementId: element.id,
+            patch: e
+          }
+        }) }
+        />
+    </Resizable>
   );
 }
 

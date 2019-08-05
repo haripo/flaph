@@ -64,7 +64,7 @@ export default function ResizeKnob(props: Props): JSX.Element {
         y={ props.height - knobSize / 2 }
         width={ knobSize }
         height={ knobSize }
-        stroke={ 'black' }
+        stroke={ '#039be5' }
         fill={ 'white' }
         onMouseUp={ () => setStartPosition(null) }
         onMouseMove={ handleMouseMove }
