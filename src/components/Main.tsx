@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Graph from './graph/Graph';
+import Graph from './Graph';
 import { parse, patch } from '../documenters/simple';
 // import { layout } from '../designers/dagre';
 import { layout } from '../designers/cola';

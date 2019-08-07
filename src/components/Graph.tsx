@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import RectangleTextNode from './RectangleTextNode';
-import { Layout, BoxLayoutElement, PathLayoutElement, ModelElement, LayoutElement, PatchRequest } from '../../types';
-import Resizable from './Resizeable';
+import TextBox from './graphs/TextBox';
+import { Layout, LayoutElement, PatchRequest, PathLayoutElement } from '../types';
+import BoxController from './controlls/Box';
 
 type PatchRequestHandler = ({ patchRequest: PatchRequest }) => void;
 type Props = {
@@ -49,7 +49,7 @@ function Controllers(props: { controller: Controller, onChange: (e: { patchReque
   switch (controller.target.type) {
     case 'box':
       return (
-        <Resizable
+        <BoxController
           key={ controller.target.id }
           x={ controller.target.location.x }
           y={ controller.target.location.y }
@@ -105,7 +105,7 @@ export default function Graph(props: Props) {
             switch (element.type) {
               case 'box':
                 return (
-                  <RectangleTextNode
+                  <TextBox
                     key={ element.id }
                     node={ element }
                     onChange={ e => onChange(makeChangeEvent(element.id, e)) }

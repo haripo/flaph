@@ -8,7 +8,7 @@ type Props = {
   onChange: (e: { [key: string]: string }) => void
 }
 
-export default function RectangleTextNode(props: Props) {
+export default function TextBox(props: Props) {
   const { node } = props;
 
   return (

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import ResizeKnob from './ResizeKnob';
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
   onChange: (e: { [key: string]: string }) => void
 }
 
-export default function Resizable(props: Props) {
+export default function BoxController(props: Props) {
   const padding = 6;
 
   const { x, y } = props;
