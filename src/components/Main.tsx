@@ -60,7 +60,7 @@ export default function Main() {
           parseResult.status === 'succeeded' ? (
           <Graph
             layout={ layout(parseResult.model) }
-            onNodeChange={ ({ patchRequest }) => {
+            onChange={ ({ patchRequest }) => {
               setSource(patch(source, patchRequest, parseResult.sourceMap));
             }}
           />

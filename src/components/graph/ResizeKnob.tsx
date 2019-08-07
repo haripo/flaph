@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
 
+type ResizeEvent = {
+  offset: {
+    x: number
+    y: number
+  }
+}
+
 type Props = {
   width: number
   height: number
-  onResizing: (e: { offset: { x: number, y: number } }) => void
-  onResized: () => void
+  onResizeStart: (e: ResizeEvent) => void
+  onResizing: (e: ResizeEvent) => void
+  onResizeEnd: (e: ResizeEvent) => void
 }
 
 type Position = {
@@ -12,22 +20,21 @@ type Position = {
   y: number
 }
 
-type ResizeState = {
-  startPosition: {
-    x: number
-    y: number
-  }
-  currentPosition: {
-    x: number
-    y: number
-  }
-}
-
 export default function ResizeKnob(props: Props): JSX.Element {
   const knobSize = 8;
   const eventTrapBounds = 1000;
 
   const [startPosition, setStartPosition] = useState<Position | null>(null);
+
+  const handleMouseUp = (e: React.MouseEvent) => {
+    props.onResizeStart({
+      offset: {
+        x: e.clientX - startPosition.x,
+        y: e.clientY - startPosition.y,
+      }
+    });
+    setStartPosition(null);
+  };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (startPosition) {
@@ -42,7 +49,17 @@ export default function ResizeKnob(props: Props): JSX.Element {
         y: e.clientY
       });
     }
-  }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setStartPosition({ x: e.clientX, y: e.clientY });
+    props.onResizeStart({
+      offset: {
+        x: 0,
+        y: 0
+      }
+    })
+  };
 
   return (
     <React.Fragment>
@@ -54,8 +71,11 @@ export default function ResizeKnob(props: Props): JSX.Element {
             y={ -eventTrapBounds / 2 }
             width={ eventTrapBounds }
             height={ eventTrapBounds }
+            onMouseUp={ handleMouseUp }
             onMouseMove={ handleMouseMove }
-            onMouseUp={ () => setStartPosition(null) }
+            style={ {
+              pointerEvents: 'all'
+            } }
           />
         )
       }
@@ -66,9 +86,12 @@ export default function ResizeKnob(props: Props): JSX.Element {
         height={ knobSize }
         stroke={ '#039be5' }
         fill={ 'white' }
-        onMouseUp={ () => setStartPosition(null) }
+        style={ {
+          pointerEvents: 'all'
+        } }
+        onMouseUp={ handleMouseUp }
         onMouseMove={ handleMouseMove }
-        onMouseDown={ e => setStartPosition({ x: e.clientX, y: e.clientY }) }
+        onMouseDown={ handleMouseDown }
       />
     </React.Fragment>
   )

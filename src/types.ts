@@ -32,7 +32,6 @@ export type PathLayoutElement = LayoutElementBase & {
 };
 export type LayoutElement = BoxLayoutElement | PathLayoutElement;
 
-
 export type PatchRequest = {
   elementId: string
   patch: { [key: string]: string }

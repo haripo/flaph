@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
-import EditableText from './EditableText';
+import React, { useEffect, useState } from 'react';
 import ResizeKnob from './ResizeKnob';
-import { BoxLayoutElement } from '../../types';
 
 type Props = {
   x: number
@@ -15,54 +13,44 @@ type Props = {
 export default function Resizable(props: Props) {
   const padding = 6;
 
-  const { x, y, width, height, onChange } = props;
-  const [hovered, setHovered] = useState(false);
+  const { x, y } = props;
+  const [size, setSize] = useState({ width: props.width, height: props.height });
 
   return (
-    <g
-      onMouseEnter={ e => setHovered(true) }
-      onMouseLeave={ e => setHovered(false) }
-  >
-    {
-      hovered ? (
-        <React.Fragment>
-          { props.children }
-          <g transform={ `translate(${x - padding}, ${y - padding})` }>
-            <rect // for capturing mouse events
-              width={ width + padding * 2 }
-              height={ height + padding * 2 }
-              strokeWidth={ 30 }
-              stroke={ 'transparent' }
-              fill={ 'none' }
-            />
-            <rect
-              width={ width + padding * 2 }
-              height={ height + padding * 2 }
-              stroke={ '#039be5' }
-              strokeDasharray={ '2 2' }
-              strokeWidth={ 1 }
-              fill={ 'none' }
-            />
-            <ResizeKnob
-              width={ width + padding * 2 }
-              height= { height + padding * 2 }
-              onResized={ () => {} }
-              onResizing={ e => {
-                props.onChange(
-                  {
-                    width: (width + e.offset.x).toString(),
-                    height: (height + e.offset.y).toString()
-                  }
-                );
+    <React.Fragment>
+      { props.children }
+      <g transform={ `translate(${ x - padding }, ${ y - padding })` }>
+        <rect
+          width={ size.width + padding * 2 }
+          height={ size.height + padding * 2 }
+          stroke={ '#039be5' }
+          strokeDasharray={ '2 2' }
+          strokeWidth={ 1 }
+          fill={ 'none' }
+        />
+        <ResizeKnob
+          width={ size.width + padding * 2 }
+          height={ size.height + padding * 2 }
+          onResizeStart={ () => {
+          } }
+          onResizeEnd={ () => {
+          } }
+          onResizing={ e => {
+            const newSize = {
+              width: size.width + e.offset.x,
+              height: size.height + e.offset.y
+            };
+            setSize(newSize);
+            props.onChange(
+              {
+                width: newSize.width.toString(),
+                height: newSize.height.toString()
               }
-              }
-            />
-          </g>
-        </React.Fragment>
-      ) : (
-        props.children
-      )
-    }
-    </g>
+            );
+          }
+          }
+        />
+      </g>
+    </React.Fragment>
   )
 }

@@ -39,8 +39,8 @@ export function layout(graphModel: GraphModel): Layout {
   layout.handleDisconnected(false);
   layout.start(50, 50, 50, 50);
 
-  const pageX = -Math.min(...layout.nodes().map(n => n.x - n.width / 2));
-  const pageY = -Math.min(...layout.nodes().map(n => n.y - n.height / 2));
+  const pageX = -Math.min(...layout.nodes().map(n => n.x));
+  const pageY = -Math.min(...layout.nodes().map(n => n.y));
 
   const nodes: Layout = layout.nodes()
     .map(node => {
@@ -75,20 +75,20 @@ export function layout(graphModel: GraphModel): Layout {
         a.x -= dx;
         a.y -= dy;
         return [a, b];
-      }
+      };
 
       // clipEdgeByRect は辺の片方を clip するので，reverse して 2 回実行する
       let rectPair = clipEdgeByRect(clipEdgeByRect([{
-        x: source.x + nodePadding + pageX,
-        y: source.y + nodePadding + pageY,
+        x: source.x + pageX + source.width / 2,
+        y: source.y + pageY + source.height / 2,
         width: source.width - nodePadding * 2,
         height: source.height - nodePadding * 2
       }, {
-        x: target.x + nodePadding + pageX,
-        y: target.y + nodePadding + pageY,
+        x: target.x + pageX + target.width / 2,
+        y: target.y + pageY + target.height / 2,
         width: target.width - nodePadding * 2,
         height: target.height - nodePadding * 2
-      }]).reverse())
+      }]).reverse());
 
       return {
         id: null,

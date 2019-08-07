@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import EditableText from './EditableText';
-import ResizeKnob from './ResizeKnob';
 import { BoxLayoutElement } from '../../types';
 
 type Props = {
   node: BoxLayoutElement,
+  onClick: React.MouseEventHandler
   onChange: (e: { [key: string]: string }) => void
 }
 
@@ -14,11 +14,13 @@ export default function RectangleTextNode(props: Props) {
   return (
     <g
       key={ node.id }
-      transform={ `translate(${node.location.x - node.location.width / 2}, ${node.location.y - node.location.height / 2})` }
-      style={{
-        overflow: 'hidden'
-      }}
-  >
+      transform={ `translate(${ node.location.x }, ${ node.location.y })` }
+      style={ {
+        overflow: 'hidden',
+        pointerEvents: 'auto'
+      } }
+      onClick={ props.onClick }
+    >
       <rect
         x={ 0 }
         y={ 0 }

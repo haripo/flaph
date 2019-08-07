@@ -1,41 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import RectangleTextNode from './RectangleTextNode';
-import { Layout, BoxLayoutElement, PathLayoutElement } from '../../types';
+import { Layout, BoxLayoutElement, PathLayoutElement, ModelElement, LayoutElement, PatchRequest } from '../../types';
 import Resizable from './Resizeable';
 
 type PatchRequestHandler = ({ patchRequest: PatchRequest }) => void;
 type Props = {
   layout: Layout
-  onNodeChange: PatchRequestHandler
-}
-
-function renderNode(element: BoxLayoutElement, onChange: PatchRequestHandler) {
-  const { x, y, width, height } = element.location;
-  return (
-    <Resizable
-      key={element.id}
-      x={ x - width / 2 }
-      y={ y - height / 2 }
-      width={ width }
-      height={ height }
-      onChange={ (e) => onChange({
-        patchRequest: {
-          elementId: element.id,
-          patch: e
-        }
-      }) }
-    >
-      <RectangleTextNode
-        node={element}
-        onChange={ (e) => onChange({
-          patchRequest: {
-            elementId: element.id,
-            patch: e
-          }
-        }) }
-        />
-    </Resizable>
-  );
+  onChange: PatchRequestHandler
 }
 
 function renderEdge(element: PathLayoutElement, onChange: PatchRequestHandler) {
@@ -44,32 +15,125 @@ function renderEdge(element: PathLayoutElement, onChange: PatchRequestHandler) {
   for (let i = 0; i < points.length - 1; i++) {
     result.push(
       <line
-        key={element.id + '-' + i}
-        x1={points[i].x}
-        y1={points[i].y}
-        x2={points[i + 1].x}
-        y2={points[i + 1].y}
-        stroke={'black'}
-        strokeWidth={1}
+        key={ element.id + '-' + i }
+        x1={ points[i].x }
+        y1={ points[i].y }
+        x2={ points[i + 1].x }
+        y2={ points[i + 1].y }
+        stroke={ 'black' }
+        strokeWidth={ 1 }
       />
     );
   }
   return result;
 }
 
+function makeChangeEvent(elementId: string, patch: { [key: string]: string }) {
+  return {
+    patchRequest: {
+      elementId,
+      patch
+    }
+  };
+}
+
+type Controller = {
+  target: LayoutElement
+  // properties: any
+}
+
+function Controllers(props: { controller: Controller, onChange: (e: { patchRequest: PatchRequest }) => void }) {
+  const { controller } = props;
+  if (!controller) return null;
+
+  switch (controller.target.type) {
+    case 'box':
+      return (
+        <Resizable
+          key={ controller.target.id }
+          x={ controller.target.location.x }
+          y={ controller.target.location.y }
+          width={ controller.target.location.width }
+          height={ controller.target.location.height }
+          onChange={ (e) => props.onChange({
+            patchRequest: {
+              elementId: controller.target.id,
+              patch: e
+            }
+          }) }
+        />
+      );
+    default:
+      return null;
+  }
+}
+
 export default function Graph(props: Props) {
+  const { onChange } = props;
+  const [controller, setController] = useState<Controller | null>(null);
+
   return (
-    <svg width='100%' height='100%'>
-      {
-        props.layout.map(element => {
-          switch (element.type) {
-            case 'box':
-              return renderNode(element, props.onNodeChange)
-            case 'path':
-              return renderEdge(element, props.onNodeChange)
-          }
-        })
-      }
-    </svg>
+    <div
+      style={ {
+        position: 'relative',
+        width: '100%',
+        height: '100%'
+      } }
+    >
+      <div
+        style={ {
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%'
+        } }
+        onClick={ () => setController(null) }
+      />
+      <svg
+        width='100%'
+        height='100%'
+        style={ {
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          pointerEvents: 'none'
+        } }
+      >
+        {
+          props.layout.map(element => {
+            switch (element.type) {
+              case 'box':
+                return (
+                  <RectangleTextNode
+                    key={ element.id }
+                    node={ element }
+                    onChange={ e => onChange(makeChangeEvent(element.id, e)) }
+                    onClick={ e => setController({ target: element }) }
+                  />
+                );
+              case 'path':
+                return renderEdge(element, props.onChange)
+            }
+          })
+        }
+      </svg>
+      <svg
+        width='100%'
+        height='100%'
+        style={ {
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          pointerEvents: 'none'
+        } }>
+        <Controllers
+          controller={ controller }
+          onChange={ e => {
+            onChange(e);
+          } }
+        />
+      </svg>
+    </div>
   )
 }
