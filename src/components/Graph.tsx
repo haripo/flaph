@@ -42,7 +42,7 @@ type Controller = {
   // properties: any
 }
 
-function Controllers(props: { controller: Controller, onChange: (e: { patchRequest: PatchRequest }) => void }) {
+function Controllers(props: { controller: Controller, layout: Layout, onChange: (e: { patchRequest: PatchRequest }) => void }) {
   const { controller } = props;
   if (!controller) return null;
 
@@ -51,10 +51,12 @@ function Controllers(props: { controller: Controller, onChange: (e: { patchReque
       return (
         <BoxController
           key={ controller.target.id }
+          elementId={ controller.target.id }
           x={ controller.target.location.x }
           y={ controller.target.location.y }
           width={ controller.target.location.width }
           height={ controller.target.location.height }
+          layout={ props.layout }
           onChange={ (e) => props.onChange({
             patchRequest: {
               elementId: controller.target.id,
@@ -101,7 +103,7 @@ export default function Graph(props: Props) {
         } }
       >
         {
-          props.layout.map(element => {
+          Object.values(props.layout).map(element => {
             switch (element.type) {
               case 'box':
                 return (
@@ -129,6 +131,7 @@ export default function Graph(props: Props) {
         } }>
         <Controllers
           controller={ controller }
+          layout={ props.layout }
           onChange={ e => {
             onChange(e);
           } }

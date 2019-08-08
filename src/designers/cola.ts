@@ -1,5 +1,5 @@
 import * as Cola from 'webcola';
-import { GraphModel, Layout } from '../types';
+import { GraphModel, Layout, LayoutElement } from '../types';
 
 type Rect = { x: number, y: number, width: number, height: number };
 
@@ -16,14 +16,18 @@ export function layout(graphModel: GraphModel): Layout {
     elementIdToIndex[element.id] = i;
   }
 
-  layout.nodes(
-    graphModel.map(e => ({
+  layout.nodes(graphModel.map(e => {
+    const hasPosition = e.properties.x !== undefined && e.properties.y !== undefined;
+    return {
       id: e.id,
       name: e.id,
+      x: hasPosition ? parseInt(e.properties.x) : undefined,
+      y: hasPosition ? parseInt(e.properties.y) : undefined,
+      fixed: hasPosition ? 1 : 0,
       width: parseInt(e.properties.width || '100') + nodePadding * 2,
       height: parseInt(e.properties.height || '100') + nodePadding * 2,
-    }))
-  );
+    }
+  }));
 
   layout.links(
     graphModel
@@ -42,7 +46,7 @@ export function layout(graphModel: GraphModel): Layout {
   const pageX = -Math.min(...layout.nodes().map(n => n.x));
   const pageY = -Math.min(...layout.nodes().map(n => n.y));
 
-  const nodes: Layout = layout.nodes()
+  const nodes: LayoutElement[] = layout.nodes()
     .map(node => {
       const model = graphModel.find(n => n.id === node['id']);
       return {
@@ -58,7 +62,7 @@ export function layout(graphModel: GraphModel): Layout {
       };
     });
 
-  const edges: Layout = layout.links()
+  const edges: LayoutElement[] = layout.links()
     .map(link => {
       const source = link.source as Cola.Node;
       const target = link.target as Cola.Node;
@@ -91,12 +95,11 @@ export function layout(graphModel: GraphModel): Layout {
       }]).reverse());
 
       return {
-        id: null,
+        id: `@edge-${source['id']}-${target['id']}`,
         model: {
           id: null,
           type: 'edge',
-          properties: {
-          }
+          properties: {}
         },
         type: 'path',
         location: [
@@ -112,5 +115,9 @@ export function layout(graphModel: GraphModel): Layout {
       };
     });
 
-  return [...nodes, ...edges];
+  let result = {};
+  for (let element of [...nodes, ...edges]) {
+    result[element.id] = element;
+  }
+  return result;
 }

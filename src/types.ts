@@ -17,7 +17,7 @@ export type GraphSourceMap = {
   }
 }
 
-export type Layout = LayoutElement[]
+export type Layout = { [id: string]: LayoutElement }
 export type LayoutElementBase = {
   id: string | null
   model: ModelElement | null

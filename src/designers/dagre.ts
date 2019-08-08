@@ -1,5 +1,5 @@
 import dagre from 'dagre';
-import { GraphModel, Layout } from '../types';
+import { GraphModel, Layout, LayoutElement } from '../types';
 
 export function layout(graphModel: GraphModel): Layout {
   const graph = new dagre.graphlib.Graph();
@@ -25,7 +25,7 @@ export function layout(graphModel: GraphModel): Layout {
 
   dagre.layout(graph);
 
-  const nodes: Layout = graph.nodes()
+  const nodes: LayoutElement[] = graph.nodes()
     .map(v => graph.node(v))
     .map(v => {
       const model = graphModel.find(node => node.id === v.id);
@@ -42,10 +42,10 @@ export function layout(graphModel: GraphModel): Layout {
       };
     });
 
-  const edges: Layout = graph.edges()
+  const edges: LayoutElement[] = graph.edges()
     .map(e => {
       return {
-        id: null,
+        id: `@edge-${e.v}-${e.w}`,
         model: {
           id: null,
           type: 'edge',
@@ -59,5 +59,9 @@ export function layout(graphModel: GraphModel): Layout {
       };
     });
 
-  return [...nodes, ...edges]
+  let result = {};
+  for (let element of [...nodes, ...edges]) {
+    result[element.id] = element;
+  }
+  return result;
 }
