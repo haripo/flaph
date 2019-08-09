@@ -46,13 +46,14 @@ export default function BoxController(props: Props) {
           onMouseLeave={ e => exitDragging() }
           onMouseMove={ e => {
             if (dragging) {
-              setPosition({
-                x: position.x + e.movementX,
-                y: position.y + e.movementY
-              });
+              const newPosition = {
+                x: Math.round(position.x + e.movementX),
+                y: Math.round(position.y + e.movementY)
+              };
+              setPosition(newPosition);
               props.onChange({
-                x: Math.round(position.x + e.movementX).toString(),
-                y: Math.round(position.y + e.movementY).toString()
+                x: newPosition.x.toString(),
+                y: newPosition.y.toString()
               });
             }
           } }

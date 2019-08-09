@@ -23,7 +23,7 @@ export function layout(graphModel: GraphModel): Layout {
       name: e.id,
       x: hasPosition ? parseInt(e.properties.x) : undefined,
       y: hasPosition ? parseInt(e.properties.y) : undefined,
-      fixed: hasPosition ? 1 : 0,
+      fixed: hasPosition ? 2 : 0,
       width: parseInt(e.properties.width || '100') + nodePadding * 2,
       height: parseInt(e.properties.height || '100') + nodePadding * 2,
     }
@@ -40,11 +40,11 @@ export function layout(graphModel: GraphModel): Layout {
 
   layout.avoidOverlaps(true);
   layout.linkDistance(120);
-  layout.handleDisconnected(false);
-  layout.start(50, 50, 50, 50);
+  layout.start(50, 50, 50);
 
   const pageX = -Math.min(...layout.nodes().map(n => n.x));
   const pageY = -Math.min(...layout.nodes().map(n => n.y));
+
 
   const nodes: LayoutElement[] = layout.nodes()
     .map(node => {
