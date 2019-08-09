@@ -29,6 +29,11 @@ const defaultSource = `1: {
   width: 50
   height: 200
 }
+
+@constraint.1: {
+  type: horizontal
+  nodes: 2,3
+}
 `;
 
 export default function Main() {

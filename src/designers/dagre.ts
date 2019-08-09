@@ -10,7 +10,7 @@ export function layout(graphModel: GraphModel): Layout {
 
   // TODO: ensure element.properties.{body, width, height} are presents
 
-  for (let element of graphModel) {
+  for (let element of Object.values(graphModel.elements)) {
     graph.setNode(element.id, {
       id: element.id,
       label: element.properties.body,
@@ -28,7 +28,7 @@ export function layout(graphModel: GraphModel): Layout {
   const nodes: LayoutElement[] = graph.nodes()
     .map(v => graph.node(v))
     .map(v => {
-      const model = graphModel.find(node => node.id === v.id);
+      const model = graphModel[v.id];
       return {
         id: model.id,
         model: model,

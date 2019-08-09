@@ -12,11 +12,11 @@ export function layout(graphModel: GraphModel): Layout {
   const nodePadding = 20;
 
   const elementIdToIndex = {};
-  for (let [i, element] of graphModel.entries()) {
+  for (let [i, element] of Object.values(graphModel.elements).entries()) {
     elementIdToIndex[element.id] = i;
   }
 
-  layout.nodes(graphModel.map(e => {
+  layout.nodes(Object.values(graphModel.elements).map(e => {
     const hasPosition = e.properties.x !== undefined && e.properties.y !== undefined;
     return {
       id: e.id,
@@ -30,12 +30,29 @@ export function layout(graphModel: GraphModel): Layout {
   }));
 
   layout.links(
-    graphModel
+    Object.values(graphModel.elements)
       .filter(e => e.properties.to)
       .map(e => ({
         source: elementIdToIndex[e.id],
         target: elementIdToIndex[e.properties.to]
       }))
+  );
+
+  layout.constraints(
+    Object.values(graphModel.constraints)
+      .map(e => {
+        const nodeIds = e.properties['nodes'].split(',');
+        if (!nodeIds.every(id => id in graphModel.elements)) {
+          console.warn(`undefined node id: ${nodeIds}`);
+          return null;
+        }
+        return {
+          type: 'alignment',
+          axis: e.properties['type'] === 'horizontal' ? 'y' : 'x',
+          offsets: nodeIds.map(node => ({ node: elementIdToIndex[node], offset: 0 }))
+        }
+      })
+      .filter(v => v !== null)
   );
 
   layout.avoidOverlaps(true);
@@ -45,10 +62,9 @@ export function layout(graphModel: GraphModel): Layout {
   const pageX = -Math.min(...layout.nodes().map(n => n.x));
   const pageY = -Math.min(...layout.nodes().map(n => n.y));
 
-
   const nodes: LayoutElement[] = layout.nodes()
     .map(node => {
-      const model = graphModel.find(n => n.id === node['id']);
+      const model = graphModel.elements[node['id']];
       return {
         id: model.id,
         model: model,

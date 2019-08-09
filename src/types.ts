@@ -1,8 +1,19 @@
 
-export type GraphModel = ModelElement[]
+export type GraphModel = {
+  elements: { [id: string]: ModelElement }
+  constraints: { [id: string]: ModelConstraint }
+}
+
 export type ModelElement = {
   id: string
   type: string
+  properties: {
+    [key: string]: string
+  }
+}
+
+export type ModelConstraint = {
+  id: string
   properties: {
     [key: string]: string
   }

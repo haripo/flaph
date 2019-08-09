@@ -12,9 +12,7 @@ type ParseResult = {
 class Tracer {
   trace(e) {
     if (e.type === 'rule.match') {
-      if (e.rule === 'key') {
-        console.log(e);
-      }
+      // console.log(e);
     }
   }
 }
@@ -31,13 +29,30 @@ function arrayToObject(key: string, value: string, array: any[]) {
 export function parse(graphSource: string): ParseResult {
   try {
     const parsed = peg.parse(graphSource, { tracer: new Tracer() });
+
+    const model: GraphModel = {
+      elements: {},
+      constraints: {}
+    };
+
+    for (let e of parsed) {
+      if (e['id'].startsWith('@constraint')) {
+        model.constraints[e['id']] = {
+          id: e['id'],
+          properties: e['properties']
+        };
+      } else {
+        model.elements[e['id']] = {
+          id: e['id'],
+          type: 'node',
+          properties: e['properties']
+        };
+      }
+    }
+
     return {
       status: 'succeeded',
-      model: parsed.map(e => ({
-        id: e['id'],
-        type: 'node',
-        properties: e['properties']
-      })),
+      model: model,
       sourceMap: arrayToObject('id', 'sourceMap', parsed)
     };
   } catch (e) {
@@ -61,7 +76,7 @@ export function patch(source: string, request: PatchRequest, sourceMap: GraphSou
       patchSlideSize += patch.length - (range.end - range.start);
     } else {
       // insert new key-value
-      const newLine = `\n  ${key}: ${patch}`;
+      const newLine = `\n  ${ key }: ${ patch }`;
       const insertPosition = Object.values(sourceMap[request.elementId])
         .map(range => range.end)
         .reduce((p, c) => p > c ? p : c);

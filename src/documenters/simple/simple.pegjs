@@ -2,7 +2,7 @@ nodes
   = nodes:node* { return nodes; }
 
 node
-  = ws id:string ws ":" ws param:parameters ws { return { id, ...param } }
+  = ws id:id ws ":" ws param:parameters ws { return { id, ...param } }
 
 parameters
   = "{" p:parameter_pair* "}" {
@@ -21,6 +21,13 @@ parameter_pair
     }
   }
 
+id
+  = special_id
+  / string
+
+special_id
+  = "@" string "." string { return text() }
+
 key
   = string
 
@@ -35,8 +42,11 @@ value
     }
   }
 
+special_id_head
+  = "@"
+
 string
-  = chars:[a-zA-Z0-9]+ { return chars.join('') }
+  = chars:[a-zA-Z0-9_\-,]+ { return chars.join('') }
 
 ws
   = [ \t\n\r]*
