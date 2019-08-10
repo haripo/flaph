@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import TextBox from './graphs/TextBox';
-import { Layout, LayoutElement, PatchRequest, PathLayoutElement } from '../types';
+import { ControllerProperties, Layout, LayoutElement, PatchRequest, PathLayoutElement } from '../types';
 import BoxController from './controlls/Box';
 
 type PatchRequestHandler = ({ patchRequest: PatchRequest }) => void;
@@ -37,12 +37,7 @@ function makeChangeEvent(elementId: string, patch: { [key: string]: string }) {
   };
 }
 
-type Controller = {
-  target: LayoutElement
-  // properties: any
-}
-
-function Controllers(props: { controller: Controller, layout: Layout, onChange: (e: { patchRequest: PatchRequest }) => void }) {
+function Controllers(props: { controller: ControllerProperties, layout: Layout, onChange: (e: { patchRequest: PatchRequest }) => void }) {
   const { controller } = props;
   if (!controller) return null;
 
@@ -57,6 +52,7 @@ function Controllers(props: { controller: Controller, layout: Layout, onChange: 
           width={ controller.target.location.width }
           height={ controller.target.location.height }
           layout={ props.layout }
+          capability={ controller.capability }
           onChange={ (e) => props.onChange({
             patchRequest: {
               elementId: controller.target.id,
@@ -72,7 +68,7 @@ function Controllers(props: { controller: Controller, layout: Layout, onChange: 
 
 export default function Graph(props: Props) {
   const { onChange } = props;
-  const [controller, setController] = useState<Controller | null>(null);
+  const [controller, setController] = useState<ControllerProperties | null>(null);
 
   return (
     <div
@@ -111,7 +107,13 @@ export default function Graph(props: Props) {
                     key={ element.id }
                     node={ element }
                     onChange={ e => onChange(makeChangeEvent(element.id, e)) }
-                    onClick={ e => setController({ target: element }) }
+                    onControlActivated={ e => setController({
+                      target: element,
+                      capability: {
+                        canMove: false,
+                        canResize: true
+                      }
+                    }) }
                   />
                 );
               case 'path':

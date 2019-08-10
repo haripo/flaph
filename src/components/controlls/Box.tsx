@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import ResizeKnob from './ResizeKnob';
-import { BoxLayoutElement, Layout } from '../../types';
-import { Simulate } from 'react-dom/test-utils';
+import { BoxLayoutElement, ControllerCapability, Layout } from '../../types';
 
 type Props = {
   elementId: string
@@ -10,8 +9,20 @@ type Props = {
   width: number
   height: number
   layout: Layout
+  capability: ControllerCapability
   children?: React.ReactNode
   onChange: (e: { [key: string]: string }) => void
+}
+
+type DragStartPositions = {
+  box: {
+    x: number
+    y: number
+  }
+  mouse: {
+    x: number
+    y: number
+  }
 }
 
 export default function BoxController(props: Props) {
@@ -19,11 +30,11 @@ export default function BoxController(props: Props) {
 
   const [size, setSize] = useState({ width: props.width, height: props.height });
   const [position, setPosition] = useState({ x: props.x, y: props.y });
-  const [dragging, setDragging] = useState(false);
+  const [dragStartPositions, setDragStartPositions] = useState<DragStartPositions | null>(null);
 
   const exitDragging = () => {
     const layoutElement = props.layout[props.elementId] as BoxLayoutElement;
-    setDragging(false);
+    setDragStartPositions(null);
     setPosition({
       x: layoutElement.location.x,
       y: layoutElement.location.y
@@ -38,23 +49,28 @@ export default function BoxController(props: Props) {
           width={ size.width + padding * 2 }
           height={ size.height + padding * 2 }
           stroke={ 'transparent' }
-          strokeWidth={ dragging ? 80 : 20 }
+          strokeWidth={ dragStartPositions ? 80 : 20 }
           fill={ 'none' }
           style={ { pointerEvents: 'stroke' } }
-          onMouseDown={ e => setDragging(true) }
+          onMouseDown={ e => setDragStartPositions({
+            mouse: { x: e.clientX, y: e.clientY },
+            box: { x: position.x, y: position.y }
+          }) }
           onMouseUp={ e => exitDragging() }
           onMouseLeave={ e => exitDragging() }
           onMouseMove={ e => {
-            if (dragging) {
+            if (dragStartPositions) {
               const newPosition = {
-                x: Math.round(position.x + e.movementX),
-                y: Math.round(position.y + e.movementY)
+                x: Math.round(dragStartPositions.box.x - (dragStartPositions.mouse.x - e.clientX)),
+                y: Math.round(dragStartPositions.box.y - (dragStartPositions.mouse.y - e.clientY))
               };
               setPosition(newPosition);
-              props.onChange({
-                x: newPosition.x.toString(),
-                y: newPosition.y.toString()
-              });
+              if (props.capability.canMove) {
+                props.onChange({
+                  x: newPosition.x.toString(),
+                  y: newPosition.y.toString()
+                });
+              }
             }
           } }
         />
@@ -66,27 +82,31 @@ export default function BoxController(props: Props) {
           strokeWidth={ 1 }
           fill={ 'none' }
         />
-        <ResizeKnob
-          width={ size.width + padding * 2 }
-          height={ size.height + padding * 2 }
-          onResizeStart={ () => {
-          } }
-          onResizeEnd={ () => {
-          } }
-          onResizing={ e => {
-            const newSize = {
-              width: size.width + e.offset.x,
-              height: size.height + e.offset.y
-            };
-            setSize(newSize);
-            props.onChange(
-              {
-                width: newSize.width.toString(),
-                height: newSize.height.toString()
-              }
-            );
-          } }
-        />
+        { !props.capability.canResize ? null :
+          (
+            <ResizeKnob
+              width={ size.width + padding * 2 }
+              height={ size.height + padding * 2 }
+              onResizeStart={ () => {
+              } }
+              onResizeEnd={ () => {
+              } }
+              onResizing={ e => {
+                const newSize = {
+                  width: size.width + e.offset.x,
+                  height: size.height + e.offset.y
+                };
+                setSize(newSize);
+                props.onChange(
+                  {
+                    width: newSize.width.toString(),
+                    height: newSize.height.toString()
+                  }
+                );
+              } }
+            />
+          )
+        }
       </g>
     </React.Fragment>
   )

@@ -4,7 +4,7 @@ import { BoxLayoutElement } from '../../types';
 
 type Props = {
   node: BoxLayoutElement,
-  onClick: React.MouseEventHandler
+  onControlActivated: React.MouseEventHandler
   onChange: (e: { [key: string]: string }) => void
 }
 
@@ -19,7 +19,7 @@ export default function TextBox(props: Props) {
         overflow: 'hidden',
         pointerEvents: 'auto'
       } }
-      onClick={ props.onClick }
+      onClick={ props.onControlActivated }
     >
       <rect
         x={ 0 }

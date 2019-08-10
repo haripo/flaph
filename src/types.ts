@@ -47,3 +47,13 @@ export type PatchRequest = {
   elementId: string
   patch: { [key: string]: string }
 }
+
+export type ControllerCapability = {
+  canResize: boolean
+  canMove: boolean
+}
+
+export type ControllerProperties = {
+  target: LayoutElement
+  capability: ControllerCapability
+}
