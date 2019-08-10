@@ -48,7 +48,7 @@ export function layout(graphModel: GraphModel): Layout {
         }
         return {
           type: 'alignment',
-          axis: e.properties['type'] === 'horizontal' ? 'y' : 'x',
+          axis: e.id.includes('horizontal') ? 'y' : 'x',
           offsets: nodeIds.map(node => ({ node: elementIdToIndex[node], offset: 0 }))
         }
       })

@@ -59,6 +59,14 @@ function Controllers(props: { controller: ControllerProperties, layout: Layout, 
               patch: e
             }
           }) }
+          onConstraintChange={ e => props.onChange({
+            patchRequest: {
+              elementId: '@constraint.' + e.type,
+              patch: {
+                nodes: e.nodes.join(',')
+              }
+            }
+          }) }
         />
       );
     default:

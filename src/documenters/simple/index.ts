@@ -65,27 +65,34 @@ export function parse(graphSource: string): ParseResult {
 
 export function patch(source: string, request: PatchRequest, sourceMap: GraphSourceMap): string {
   let patchSlideSize = 0;
-  for (let [key, patch] of Object.entries(request.patch)) {
-    const range = sourceMap[request.elementId][key];
-    if (range) {
-      // replace value
-      source =
-        source.slice(0, range.start + patchSlideSize)
-        + patch
-        + source.slice(range.end + patchSlideSize)
-      patchSlideSize += patch.length - (range.end - range.start);
-    } else {
-      // insert new key-value
-      const newLine = `\n  ${ key }: ${ patch }`;
-      const insertPosition = Object.values(sourceMap[request.elementId])
-        .map(range => range.end)
-        .reduce((p, c) => p > c ? p : c);
-      source =
-        source.slice(0, insertPosition + patchSlideSize)
-        + newLine
-        + source.slice(insertPosition + patchSlideSize)
-      patchSlideSize += newLine.length;
+  if (request.elementId in sourceMap) {
+    for (let [key, patch] of Object.entries(request.patch)) {
+      const range = sourceMap[request.elementId][key];
+      if (range) {
+        // replace value
+        source =
+          source.slice(0, range.start + patchSlideSize)
+          + patch
+          + source.slice(range.end + patchSlideSize)
+        patchSlideSize += patch.length - (range.end - range.start);
+      } else {
+        // insert new key-value
+        const newLine = `\n  ${ key }: ${ patch }`;
+        const insertPosition = Object.values(sourceMap[request.elementId])
+          .map(range => range.end)
+          .reduce((p, c) => p > c ? p : c);
+        source =
+          source.slice(0, insertPosition + patchSlideSize)
+          + newLine
+          + source.slice(insertPosition + patchSlideSize);
+        patchSlideSize += newLine.length;
+      }
     }
+  } else {
+    // create new element
+    source += `${request.elementId}: {\n`;
+    source += Object.entries(request.patch).map(([k, v]) => `  ${k}: ${v}`).join('\n');
+    source += '\n}';
   }
   return source;
 }

@@ -30,8 +30,7 @@ const defaultSource = `1: {
   height: 200
 }
 
-@constraint.1: {
-  type: horizontal
+@constraint.horizontal: {
   nodes: 2,3
 }
 `;
@@ -66,6 +65,7 @@ export default function Main() {
           <Graph
             layout={ layout(parseResult.model) }
             onChange={ ({ patchRequest }) => {
+              console.info(patchRequest);
               setSource(patch(source, patchRequest, parseResult.sourceMap));
             }}
           />

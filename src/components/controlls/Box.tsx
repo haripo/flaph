@@ -12,6 +12,7 @@ type Props = {
   capability: ControllerCapability
   children?: React.ReactNode
   onChange: (e: { [key: string]: string }) => void
+  onConstraintChange: (e: { type: 'horizontal' | 'vertical', nodes: string[] }) => void
 }
 
 type DragStartPositions = {
@@ -60,10 +61,31 @@ export default function BoxController(props: Props) {
           onMouseLeave={ e => exitDragging() }
           onMouseMove={ e => {
             if (dragStartPositions) {
-              const newPosition = {
+              let newPosition = {
                 x: Math.round(dragStartPositions.box.x - (dragStartPositions.mouse.x - e.clientX)),
                 y: Math.round(dragStartPositions.box.y - (dragStartPositions.mouse.y - e.clientY))
               };
+
+              // snap
+              let constraints = [];
+              for (let element of Object.values(props.layout)) {
+                if (element.type !== 'box') continue;
+                if (Math.abs(element.location.x - newPosition.x) < 15) {
+                  newPosition.x = element.location.x;
+                  props.onConstraintChange({
+                    type: 'vertical',
+                    nodes: [element.id, props.elementId]
+                  });
+                }
+                if (Math.abs(element.location.y - newPosition.y) < 15) {
+                  newPosition.y = element.location.y;
+                  props.onConstraintChange({
+                    type: 'horizontal',
+                    nodes: [element.id, props.elementId]
+                  });
+                }
+              }
+
               setPosition(newPosition);
               if (props.capability.canMove) {
                 props.onChange({
