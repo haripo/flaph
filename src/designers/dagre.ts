@@ -8,7 +8,7 @@ export function layout(graphModel: GraphModel): Layout {
     return {}
   }));
 
-  // TODO: ensure element.properties.{body, width, height} are presents
+  // TODO: ensure element.properties.{body, width, height} presents
 
   for (let element of Object.values(graphModel.elements)) {
     graph.setNode(element.id, {
@@ -28,7 +28,7 @@ export function layout(graphModel: GraphModel): Layout {
   const nodes: LayoutElement[] = graph.nodes()
     .map(v => graph.node(v))
     .map(v => {
-      const model = graphModel[v.id];
+      const model = graphModel.elements[v.id];
       return {
         id: model.id,
         model: model,
@@ -36,8 +36,8 @@ export function layout(graphModel: GraphModel): Layout {
         location: {
           width: v.width,
           height: v.height,
-          x: v.x,
-          y: v.y
+          x: v.x - v.width / 2,
+          y: v.y - v.height / 2
         }
       };
     });
