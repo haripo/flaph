@@ -1,15 +1,13 @@
 import React from 'react';
 import TextBox from './graphs/TextBox';
-import { ControllerProperties, Layout, PathLayoutElement } from '../types';
+import { BoxLayoutElement, ControllerProperties, Layout, PathLayoutElement } from '../types';
 
-type PatchRequestHandler = ({ patchRequest: PatchRequest }) => void;
 type Props = {
   layout: Layout
-  onChange: PatchRequestHandler
   requestControl: (request: ControllerProperties) => void
 }
 
-function renderEdge(element: PathLayoutElement, onChange: PatchRequestHandler) {
+function renderEdge(element: PathLayoutElement) {
   const result = [];
   const points = element.location;
   for (let i = 0; i < points.length - 1; i++) {
@@ -28,18 +26,35 @@ function renderEdge(element: PathLayoutElement, onChange: PatchRequestHandler) {
   return result;
 }
 
-function makeChangeEvent(elementId: string, patch: { [key: string]: string }) {
-  return {
-    patchRequest: {
-      elementId,
-      patch
-    }
-  };
+function renderNode(element: BoxLayoutElement, requestControl: (request: ControllerProperties) => void) {
+  return (
+    <TextBox
+      key={ element.id }
+      node={ element }
+      onClick={ e => requestControl({
+        type: 'box',
+        target: element,
+        capability: {
+          canMove: false,
+          canResize: true,
+          canEditConstraint: false
+        }
+      }) }
+      onTextClick={ e => requestControl({
+        type: 'text',
+        target: element,
+        bounds: {
+          x: element.location.x + 6,
+          y: element.location.y + 6,
+          width: element.location.width - 12,
+          height: element.location.height - 12
+        }
+      }) }
+    />
+  );
 }
 
 export default function GraphLayer(props: Props) {
-  const { onChange } = props;
-
   return (
     <svg
       width='100%'
@@ -55,34 +70,9 @@ export default function GraphLayer(props: Props) {
         Object.values(props.layout).map(element => {
           switch (element.type) {
             case 'box':
-              return (
-                <TextBox
-                  key={ element.id }
-                  node={ element }
-                  onChange={ e => onChange(makeChangeEvent(element.id, e)) }
-                  onControlActivated={ e => props.requestControl({
-                    type: 'box',
-                    target: element,
-                    capability: {
-                      canMove: false,
-                      canResize: true,
-                      canEditConstraint: false
-                    }
-                  }) }
-                  onTextClicked={ e => props.requestControl({
-                    type: 'text',
-                    target: element,
-                    bounds: {
-                      x: element.location.x + 6,
-                      y: element.location.y + 6,
-                      width: element.location.width - 12,
-                      height: element.location.height - 12
-                    }
-                  }) }
-                />
-              );
+              return renderNode(element, props.requestControl);
             case 'path':
-              return renderEdge(element, props.onChange)
+              return renderEdge(element);
           }
         })
       }

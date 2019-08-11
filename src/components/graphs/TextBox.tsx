@@ -3,9 +3,8 @@ import { BoxLayoutElement } from '../../types';
 
 type Props = {
   node: BoxLayoutElement,
-  onControlActivated: React.MouseEventHandler
-  onTextClicked: React.MouseEventHandler
-  onChange: (e: { [key: string]: string }) => void
+  onClick: React.MouseEventHandler
+  onTextClick: React.MouseEventHandler
 }
 
 export default function TextBox(props: Props) {
@@ -27,10 +26,10 @@ export default function TextBox(props: Props) {
           overflow: 'hidden',
           pointerEvents: 'auto'
         } }
-        onClick={ props.onControlActivated }
+        onClick={ props.onClick }
       />
       <svg
-        onClick={ props.onTextClicked }
+        onClick={ props.onTextClick }
         style={{
           pointerEvents: 'auto',
           userSelect: 'none'

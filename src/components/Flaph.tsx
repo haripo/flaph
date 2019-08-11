@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { ControllerProperties, Layout } from '../types';
 import ControlLayer from './ControlLayer';
 import GraphLayer from './GraphLayer';
-import { layout } from '../designers/dagre';
-import { patch } from '../documenters/simple';
 
 type PatchRequestHandler = ({ patchRequest: PatchRequest }) => void;
 type Props = {
@@ -35,15 +33,12 @@ export default function Flaph(props: Props) {
       />
       <GraphLayer
         layout={ props.layout }
-        onChange={ props.onChange }
         requestControl={ e => setController(e) }
       />
       <ControlLayer
         controller={ controller }
         layout={ props.layout }
-        onChange={ e => {
-          onChange(e);
-        } }
+        onChange={ onChange }
       />
     </div>
   )
