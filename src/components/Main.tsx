@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import Graph from './Graph';
 import { parse, patch } from '../documenters/simple';
 import { layout } from '../designers/dagre';
+import Flaph from './Flaph';
 // import { layout } from '../designers/cola';
 
 const defaultSource = `1: {
@@ -62,10 +62,9 @@ export default function Main() {
       }}>
         {
           parseResult.status === 'succeeded' ? (
-          <Graph
+          <Flaph
             layout={ layout(parseResult.model) }
             onChange={ ({ patchRequest }) => {
-              console.info(patchRequest);
               setSource(patch(source, patchRequest, parseResult.sourceMap));
             }}
           />
