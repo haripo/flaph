@@ -51,6 +51,7 @@ export type PatchRequest = {
 export type ControllerCapability = {
   canResize: boolean
   canMove: boolean
+  canEditConstraint: boolean
 }
 
 export type ControllerProperties = {

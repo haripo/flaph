@@ -119,7 +119,8 @@ export default function Graph(props: Props) {
                       target: element,
                       capability: {
                         canMove: false,
-                        canResize: true
+                        canResize: true,
+                        canEditConstraint: false
                       }
                     }) }
                   />
