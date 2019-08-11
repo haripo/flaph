@@ -54,7 +54,21 @@ export type ControllerCapability = {
   canEditConstraint: boolean
 }
 
-export type ControllerProperties = {
+export type BoxControllerProperties = {
+  type: 'box'
   target: LayoutElement
   capability: ControllerCapability
 }
+
+export type TextControllerProperties = {
+  type: 'text'
+  target: LayoutElement
+  bounds: {
+    x: number
+    y: number
+    width: number
+    height: number
+  }
+}
+
+export type ControllerProperties = BoxControllerProperties | TextControllerProperties;

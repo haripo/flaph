@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import TextBox from './graphs/TextBox';
 import { ControllerProperties, Layout, LayoutElement, PatchRequest, PathLayoutElement } from '../types';
 import BoxController from './controlls/Box';
+import TextController from './controlls/Text';
 
 type PatchRequestHandler = ({ patchRequest: PatchRequest }) => void;
 type Props = {
@@ -41,8 +42,11 @@ function Controllers(props: { controller: ControllerProperties, layout: Layout, 
   const { controller } = props;
   if (!controller) return null;
 
-  switch (controller.target.type) {
+  switch (controller.type) {
     case 'box':
+      if (controller.target.type !== 'box') {
+        throw 'invalid';
+      }
       return (
         <BoxController
           key={ controller.target.id }
@@ -69,6 +73,29 @@ function Controllers(props: { controller: ControllerProperties, layout: Layout, 
           }) }
         />
       );
+    case 'text':
+      return (
+        <TextController
+          key={ controller.target.id }
+          x={ controller.bounds.x }
+          y={ controller.bounds.y }
+          width={ controller.bounds.width }
+          height={ controller.bounds.height }
+          elementId={ controller.target.id }
+          layout={ props.layout }
+          value={ controller.target.model.properties['body'] }
+          onChange={ e => {
+            props.onChange({
+              patchRequest: {
+                elementId: controller.target.id,
+                patch: {
+                  body: e.target.value
+                }
+              }
+            })
+          } }
+        />
+      )
     default:
       return null;
   }
@@ -116,11 +143,22 @@ export default function Graph(props: Props) {
                     node={ element }
                     onChange={ e => onChange(makeChangeEvent(element.id, e)) }
                     onControlActivated={ e => setController({
+                      type: 'box',
                       target: element,
                       capability: {
                         canMove: false,
                         canResize: true,
                         canEditConstraint: false
+                      }
+                    }) }
+                    onTextClicked={ e => setController({
+                      type: 'text',
+                      target: element,
+                      bounds: {
+                        x: element.location.x + 6,
+                        y: element.location.y + 6,
+                        width: element.location.width - 12,
+                        height: element.location.height - 12
                       }
                     }) }
                   />
