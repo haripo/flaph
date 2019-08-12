@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import ResizeKnob from './ResizeKnob';
 import { BoxLayoutElement, BoxLocation, Layout } from '../../types';
+import ResizeKnob from './ResizeKnob';
 
 type Props = {
   elementId: string
@@ -16,7 +16,7 @@ type Props = {
 
   onChange: (e: { [key: string]: string }) => void
   onConstraintChange: (e: { type: 'horizontal' | 'vertical', nodes: string[] }) => void
-}
+};
 
 type DragStartPositions = {
   box: {
@@ -27,7 +27,7 @@ type DragStartPositions = {
     x: number
     y: number
   }
-}
+};
 
 export default function BoxControl(props: Props) {
   const padding = 6;
@@ -56,23 +56,23 @@ export default function BoxControl(props: Props) {
           strokeWidth={ dragStartPositions ? 80 : 20 }
           fill={ 'none' }
           style={ { pointerEvents: 'stroke' } }
-          onMouseDown={ e => setDragStartPositions({
+          onMouseDown={ (e) => setDragStartPositions({
             mouse: { x: e.clientX, y: e.clientY },
             box: { x: position.x, y: position.y }
           }) }
-          onMouseUp={ e => exitDragging() }
-          onMouseLeave={ e => exitDragging() }
-          onMouseMove={ e => {
+          onMouseUp={ (e) => exitDragging() }
+          onMouseLeave={ (e) => exitDragging() }
+          onMouseMove={ (e) => {
             if (dragStartPositions && (props.canMove || props.canEditConstraint)) {
-              let newPosition = {
+              const newPosition = {
                 x: Math.round(dragStartPositions.box.x - (dragStartPositions.mouse.x - e.clientX)),
                 y: Math.round(dragStartPositions.box.y - (dragStartPositions.mouse.y - e.clientY))
               };
 
               // snap
               if (props.canEditConstraint) {
-                for (let element of Object.values(props.layout)) {
-                  if (element.type !== 'box') continue;
+                for (const element of Object.values(props.layout)) {
+                  if (element.type !== 'box') { continue; }
                   if (Math.abs(element.location.x - newPosition.x) < 15) {
                     newPosition.x = element.location.x;
                     props.onConstraintChange({
@@ -114,10 +114,12 @@ export default function BoxControl(props: Props) {
               width={ size.width + padding * 2 }
               height={ size.height + padding * 2 }
               onResizeStart={ () => {
+                // do nothing
               } }
               onResizeEnd={ () => {
+                // do nothing
               } }
-              onResizing={ e => {
+              onResizing={ (e) => {
                 const newSize = {
                   width: size.width + e.offset.x,
                   height: size.height + e.offset.y
@@ -135,5 +137,5 @@ export default function BoxControl(props: Props) {
         }
       </g>
     </React.Fragment>
-  )
+  );
 }

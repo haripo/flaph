@@ -6,7 +6,7 @@ type Props = {
   location: BoxLocation
   onClick: React.MouseEventHandler
   onTextClick: React.MouseEventHandler
-}
+};
 
 export default function TextBox(props: Props) {
   const { x, y, width, height } = props.location;
@@ -45,5 +45,5 @@ export default function TextBox(props: Props) {
         </text>
       </svg>
     </g>
-  )
+  );
 }

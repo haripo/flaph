@@ -5,7 +5,7 @@ type Props = {
   value: string
   location: BoxLocation
   onChange: ChangeEventHandler<HTMLInputElement>
-}
+};
 
 export default function TextControl(props: Props) {
   const { x, y, width, height } = props.location;
@@ -28,8 +28,8 @@ export default function TextControl(props: Props) {
             autoFocus={ true }
             style={ {
               textAlign: 'center',
-              width: width,
-              height: height,
+              width,
+              height,
               border: 'none',
               outline: 'none',
               pointerEvents: 'auto'
@@ -38,5 +38,5 @@ export default function TextControl(props: Props) {
         </foreignObject>
       </g>
     </React.Fragment>
-  )
+  );
 }

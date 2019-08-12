@@ -1,12 +1,12 @@
 import React from 'react';
-import TextBox from './graphs/TextBox';
 import { BoxLayoutElement, ControlProperties, Layout, PathLayoutElement } from '../types';
 import { extend } from '../utils/location';
+import TextBox from './graphs/TextBox';
 
 type Props = {
   layout: Layout
   requestControl: (request: ControlProperties) => void
-}
+};
 
 function renderEdge(element: PathLayoutElement) {
   const result = [];
@@ -31,7 +31,7 @@ function renderNode(element: BoxLayoutElement, requestControl: (request: Control
   return (
     <TextBox
       key={ element.id }
-      value={ element.model.properties['body'] }
+      value={ element.model.properties.body }
       location={ element.location }
       onClick={ () => requestControl({
         type: 'box',
@@ -43,7 +43,7 @@ function renderNode(element: BoxLayoutElement, requestControl: (request: Control
       }) }
       onTextClick={ () => requestControl({
         type: 'text',
-        value: element.model.properties['body'],
+        value: element.model.properties.body,
         target: element,
         location: extend(element.location, -6)
       }) }
@@ -54,8 +54,8 @@ function renderNode(element: BoxLayoutElement, requestControl: (request: Control
 export default function GraphLayer(props: Props) {
   return (
     <svg
-      width='100%'
-      height='100%'
+      width="100%"
+      height="100%"
       style={ {
         position: 'absolute',
         top: 0,
@@ -64,7 +64,7 @@ export default function GraphLayer(props: Props) {
       } }
     >
       {
-        Object.values(props.layout).map(element => {
+        Object.values(props.layout).map((element) => {
           switch (element.type) {
             case 'box':
               return renderNode(element, props.requestControl);
@@ -74,5 +74,5 @@ export default function GraphLayer(props: Props) {
         })
       }
     </svg>
-  )
+  );
 }

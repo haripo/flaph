@@ -5,7 +5,7 @@ type ResizeEvent = {
     x: number
     y: number
   }
-}
+};
 
 type Props = {
   width: number
@@ -13,12 +13,12 @@ type Props = {
   onResizeStart: (e: ResizeEvent) => void
   onResizing: (e: ResizeEvent) => void
   onResizeEnd: (e: ResizeEvent) => void
-}
+};
 
 type Position = {
   x: number
   y: number
-}
+};
 
 export default function ResizeKnob(props: Props): JSX.Element {
   const knobSize = 8;
@@ -30,7 +30,7 @@ export default function ResizeKnob(props: Props): JSX.Element {
     props.onResizeStart({
       offset: {
         x: e.clientX - startPosition.x,
-        y: e.clientY - startPosition.y,
+        y: e.clientY - startPosition.y
       }
     });
     setStartPosition(null);
@@ -41,7 +41,7 @@ export default function ResizeKnob(props: Props): JSX.Element {
       props.onResizing({
         offset: {
           x: e.clientX - startPosition.x,
-          y: e.clientY - startPosition.y,
+          y: e.clientY - startPosition.y
         }
       });
       setStartPosition({
@@ -58,7 +58,7 @@ export default function ResizeKnob(props: Props): JSX.Element {
         x: 0,
         y: 0
       }
-    })
+    });
   };
 
   return (
@@ -94,5 +94,5 @@ export default function ResizeKnob(props: Props): JSX.Element {
         onMouseDown={ handleMouseDown }
       />
     </React.Fragment>
-  )
+  );
 }

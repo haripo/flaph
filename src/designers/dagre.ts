@@ -5,17 +5,17 @@ export function layout(graphModel: GraphModel): Layout {
   const graph = new dagre.graphlib.Graph();
   graph.setGraph({});
   graph.setDefaultEdgeLabel(((v, w) => {
-    return {}
+    return {};
   }));
 
   // TODO: ensure element.properties.{body, width, height} presents
 
-  for (let element of Object.values(graphModel.elements)) {
+  for (const element of Object.values(graphModel.elements)) {
     graph.setNode(element.id, {
       id: element.id,
       label: element.properties.body,
-      width: parseInt(element.properties.width || '100'),
-      height: parseInt(element.properties.height || '100'),
+      width: parseInt(element.properties.width || '100', 10),
+      height: parseInt(element.properties.height || '100', 10)
     });
 
     if (element.properties.to) {
@@ -26,12 +26,12 @@ export function layout(graphModel: GraphModel): Layout {
   dagre.layout(graph);
 
   const nodes: LayoutElement[] = graph.nodes()
-    .map(v => graph.node(v))
-    .map(v => {
+    .map((v) => graph.node(v))
+    .map((v) => {
       const model = graphModel.elements[v.id];
       return {
         id: model.id,
-        model: model,
+        model,
         type: 'box',
         location: {
           width: v.width,
@@ -43,7 +43,7 @@ export function layout(graphModel: GraphModel): Layout {
     });
 
   const edges: LayoutElement[] = graph.edges()
-    .map(e => {
+    .map((e) => {
       return {
         id: `@edge-${e.v}-${e.w}`,
         model: {
@@ -59,8 +59,8 @@ export function layout(graphModel: GraphModel): Layout {
       };
     });
 
-  let result = {};
-  for (let element of [...nodes, ...edges]) {
+  const result = {};
+  for (const element of [...nodes, ...edges]) {
     result[element.id] = element;
   }
   return result;

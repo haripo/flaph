@@ -1,5 +1,11 @@
-import * as Cola from 'webcola';
+import Cola, { InputNode } from 'webcola';
 import { GraphModel, Layout, LayoutElement } from '../types';
+
+declare module 'webcola' {
+  interface Node extends InputNode {
+    id: string;
+  }
+}
 
 type Rect = { x: number, y: number, width: number, height: number };
 
@@ -64,7 +70,7 @@ export function layout(graphModel: GraphModel): Layout {
 
   const nodes: LayoutElement[] = cola.nodes()
     .map((node) => {
-      const model = graphModel.elements[node.id];
+      const model = graphModel.elements[(node as Cola.Node).id];
       return {
         id: model.id,
         model,

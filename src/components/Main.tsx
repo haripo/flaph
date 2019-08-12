@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { parse, patch } from '../documenters/simple';
 import { layout } from '../designers/dagre';
+import { parse, patch } from '../documenters/simple';
 import Flaph from './Flaph';
 // import { layout } from '../designers/cola';
 
@@ -48,7 +48,7 @@ export default function Main() {
     } }>
       <textarea
         value={ source }
-        onChange={ e => setSource(e.target.value) }
+        onChange={ (e) => setSource(e.target.value) }
         style={ {
           width: 600,
           padding: 8,
@@ -73,5 +73,5 @@ export default function Main() {
         )}
       </div>
     </div>
-  )
+  );
 }

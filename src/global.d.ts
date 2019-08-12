@@ -1,29 +1,29 @@
 declare module '*.pegjs' {
-  interface IParserOptions {
+  interface ParserOptions {
     startRule?: string;
     tracer: any;
   }
 
-  export interface ILocation {
+  export interface Location {
     start: {
       offset: number,
       line: number,
       column: number
-    }
+    };
     end: {
       offset: number,
       line: number,
       column: number
-    }
+    };
   }
 
   export class SyntaxError extends Error {
-    message: string;
-    expected: string | null;
-    found: string | null;
-    location: Location;
-    name: 'SyntaxError';
+    public message: string;
+    public expected: string | null;
+    public found: string | null;
+    public location: Location;
+    public name: 'SyntaxError';
   }
 
-  export function parse(input: string, options?: IParserOptions): any;
+  export function parse(input: string, options?: ParserOptions): any;
 }

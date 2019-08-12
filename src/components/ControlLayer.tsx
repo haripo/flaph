@@ -1,11 +1,17 @@
+import React from 'react';
 import { ControlProperties, Layout, PatchRequest } from '../types';
 import BoxControl from './controls/BoxControl';
 import TextControl from './controls/TextControl';
-import React from 'react';
 
-function renderControl(props: { control: ControlProperties, layout: Layout, onChange: (e: { patchRequest: PatchRequest }) => void }) {
+type Props = {
+  control: ControlProperties
+  layout: Layout
+  onChange: (e: { patchRequest: PatchRequest }) => void
+};
+
+function renderControl(props: Props) {
   const { control } = props;
-  if (!control) return null;
+  if (!control) { return null; }
 
   switch (control.type) {
     case 'box':
@@ -24,7 +30,7 @@ function renderControl(props: { control: ControlProperties, layout: Layout, onCh
               patch: e
             }
           }) }
-          onConstraintChange={ e => props.onChange({
+          onConstraintChange={ (e) => props.onChange({
             patchRequest: {
               elementId: '@constraint.' + e.type,
               patch: {
@@ -40,7 +46,7 @@ function renderControl(props: { control: ControlProperties, layout: Layout, onCh
           key={ control.target.id }
           value={ control.value }
           location={ control.location }
-          onChange={ e => {
+          onChange={ (e) => {
             props.onChange({
               patchRequest: {
                 elementId: control.target.id,
@@ -48,7 +54,7 @@ function renderControl(props: { control: ControlProperties, layout: Layout, onCh
                   body: e.target.value
                 }
               }
-            })
+            });
           } }
         />
       );
@@ -57,11 +63,11 @@ function renderControl(props: { control: ControlProperties, layout: Layout, onCh
   }
 }
 
-export default function ControlLayer(props: { control: ControlProperties, layout: Layout, onChange: (e: { patchRequest: PatchRequest }) => void }) {
+export default function ControlLayer(props: Props) {
   return (
     <svg
-      width='100%'
-      height='100%'
+      width="100%"
+      height="100%"
       style={ {
         position: 'absolute',
         top: 0,

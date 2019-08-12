@@ -7,7 +7,7 @@ type PatchRequestHandler = ({ patchRequest: PatchRequest }) => void;
 type Props = {
   layout: Layout
   onChange: PatchRequestHandler
-}
+};
 
 export default function Flaph(props: Props) {
   const { onChange } = props;
@@ -33,7 +33,7 @@ export default function Flaph(props: Props) {
       />
       <GraphLayer
         layout={ props.layout }
-        requestControl={ e => setControl(e) }
+        requestControl={ (e) => setControl(e) }
       />
       <ControlLayer
         control={ control }
@@ -41,5 +41,5 @@ export default function Flaph(props: Props) {
         onChange={ onChange }
       />
     </div>
-  )
+  );
 }
