@@ -22,7 +22,7 @@ type Props = {
 
 export default function Knob(props: Props): JSX.Element {
   const knobSize = 8;
-  const eventTrapBounds = 1000;
+  const eventTrapBounds = 10000;
 
   const [startPosition, setStartPosition] = useState<Position | null>(null);
   const [currentPosition, setCurrentPosition] = useState<Position | null>(null);
