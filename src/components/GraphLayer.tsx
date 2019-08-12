@@ -1,11 +1,11 @@
 import React from 'react';
 import TextBox from './graphs/TextBox';
-import { BoxLayoutElement, ControllerProperties, Layout, PathLayoutElement } from '../types';
+import { BoxLayoutElement, ControlProperties, Layout, PathLayoutElement } from '../types';
 import { extend } from '../utils/location';
 
 type Props = {
   layout: Layout
-  requestControl: (request: ControllerProperties) => void
+  requestControl: (request: ControlProperties) => void
 }
 
 function renderEdge(element: PathLayoutElement) {
@@ -27,7 +27,7 @@ function renderEdge(element: PathLayoutElement) {
   return result;
 }
 
-function renderNode(element: BoxLayoutElement, requestControl: (request: ControllerProperties) => void) {
+function renderNode(element: BoxLayoutElement, requestControl: (request: ControlProperties) => void) {
   return (
     <TextBox
       key={ element.id }

@@ -1,10 +1,10 @@
 declare module '*.pegjs' {
-  interface ParserOptions {
+  interface IParserOptions {
     startRule?: string;
     tracer: any;
   }
 
-  export interface Location {
+  export interface ILocation {
     start: {
       offset: number,
       line: number,
@@ -25,5 +25,5 @@ declare module '*.pegjs' {
     name: 'SyntaxError';
   }
 
-  export function parse(input: string, options?: ParserOptions): any;
+  export function parse(input: string, options?: IParserOptions): any;
 }

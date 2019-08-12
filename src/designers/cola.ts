@@ -8,66 +8,66 @@ function clamp(value: number, lower: number, upper: number) {
 }
 
 export function layout(graphModel: GraphModel): Layout {
-  const layout = new Cola.Layout();
+  const cola = new Cola.Layout();
   const nodePadding = 20;
 
   const elementIdToIndex = {};
-  for (let [i, element] of Object.values(graphModel.elements).entries()) {
+  for (const [i, element] of Object.values(graphModel.elements).entries()) {
     elementIdToIndex[element.id] = i;
   }
 
-  layout.nodes(Object.values(graphModel.elements).map(e => {
+  cola.nodes(Object.values(graphModel.elements).map((e) => {
     const hasPosition = e.properties.x !== undefined && e.properties.y !== undefined;
     return {
       id: e.id,
       name: e.id,
-      x: hasPosition ? parseInt(e.properties.x) : undefined,
-      y: hasPosition ? parseInt(e.properties.y) : undefined,
+      x: hasPosition ? parseInt(e.properties.x, 10) : undefined,
+      y: hasPosition ? parseInt(e.properties.y, 10) : undefined,
       fixed: hasPosition ? 2 : 0,
-      width: parseInt(e.properties.width || '100') + nodePadding * 2,
-      height: parseInt(e.properties.height || '100') + nodePadding * 2,
-    }
+      width: parseInt(e.properties.width || '100', 10) + nodePadding * 2,
+      height: parseInt(e.properties.height || '100', 10) + nodePadding * 2
+    };
   }));
 
-  layout.links(
+  cola.links(
     Object.values(graphModel.elements)
-      .filter(e => e.properties.to)
-      .map(e => ({
+      .filter((e) => e.properties.to)
+      .map((e) => ({
         source: elementIdToIndex[e.id],
         target: elementIdToIndex[e.properties.to]
       }))
   );
 
-  layout.constraints(
+  cola.constraints(
     Object.values(graphModel.constraints)
-      .map(e => {
-        const nodeIds = e.properties['nodes'].split(',');
-        if (!nodeIds.every(id => id in graphModel.elements)) {
+      .map((e) => {
+        const nodeIds = e.properties.nodes.split(',');
+        if (!nodeIds.every((id) => id in graphModel.elements)) {
           console.warn(`undefined node id: ${nodeIds}`);
           return null;
         }
         return {
           type: 'alignment',
           axis: e.id.includes('horizontal') ? 'y' : 'x',
-          offsets: nodeIds.map(node => ({ node: elementIdToIndex[node], offset: 0 }))
-        }
+          offsets: nodeIds.map((node) => ({ node: elementIdToIndex[node], offset: 0 }))
+        };
       })
-      .filter(v => v !== null)
+      .filter((v) => v !== null)
   );
 
-  layout.avoidOverlaps(true);
-  layout.linkDistance(120);
-  layout.start(50, 50, 50);
+  cola.avoidOverlaps(true);
+  cola.linkDistance(120);
+  cola.start(50, 50, 50);
 
-  const pageX = -Math.min(...layout.nodes().map(n => n.x));
-  const pageY = -Math.min(...layout.nodes().map(n => n.y));
+  const pageX = -Math.min(...cola.nodes().map((n) => n.x));
+  const pageY = -Math.min(...cola.nodes().map((n) => n.y));
 
-  const nodes: LayoutElement[] = layout.nodes()
-    .map(node => {
-      const model = graphModel.elements[node['id']];
+  const nodes: LayoutElement[] = cola.nodes()
+    .map((node) => {
+      const model = graphModel.elements[node.id];
       return {
         id: model.id,
-        model: model,
+        model,
         type: 'box',
         location: {
           width: node.width - nodePadding * 2,
@@ -78,8 +78,8 @@ export function layout(graphModel: GraphModel): Layout {
       };
     });
 
-  const edges: LayoutElement[] = layout.links()
-    .map(link => {
+  const edges: LayoutElement[] = cola.links()
+    .map((link) => {
       const source = link.source as Cola.Node;
       const target = link.target as Cola.Node;
 
@@ -98,7 +98,7 @@ export function layout(graphModel: GraphModel): Layout {
       };
 
       // clipEdgeByRect は辺の片方を clip するので，reverse して 2 回実行する
-      let rectPair = clipEdgeByRect(clipEdgeByRect([{
+      const rectPair = clipEdgeByRect(clipEdgeByRect([{
         x: source.x + pageX + source.width / 2,
         y: source.y + pageY + source.height / 2,
         width: source.width - nodePadding * 2,
@@ -111,7 +111,7 @@ export function layout(graphModel: GraphModel): Layout {
       }]).reverse());
 
       return {
-        id: `@edge-${source['id']}-${target['id']}`,
+        id: `@edge-${source.id}-${target.id}`,
         model: {
           id: null,
           type: 'edge',
@@ -131,8 +131,8 @@ export function layout(graphModel: GraphModel): Layout {
       };
     });
 
-  let result = {};
-  for (let element of [...nodes, ...edges]) {
+  const result = {};
+  for (const element of [...nodes, ...edges]) {
     result[element.id] = element;
   }
   return result;

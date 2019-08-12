@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ControllerProperties, Layout } from '../types';
+import { ControlProperties, Layout } from '../types';
 import ControlLayer from './ControlLayer';
 import GraphLayer from './GraphLayer';
 
@@ -11,7 +11,7 @@ type Props = {
 
 export default function Flaph(props: Props) {
   const { onChange } = props;
-  const [controller, setController] = useState<ControllerProperties | null>(null);
+  const [control, setControl] = useState<ControlProperties | null>(null);
 
   return (
     <div
@@ -29,14 +29,14 @@ export default function Flaph(props: Props) {
           width: '100%',
           height: '100%'
         } }
-        onClick={ () => setController(null) }
+        onClick={ () => setControl(null) }
       />
       <GraphLayer
         layout={ props.layout }
-        requestControl={ e => setController(e) }
+        requestControl={ e => setControl(e) }
       />
       <ControlLayer
-        controller={ controller }
+        control={ control }
         layout={ props.layout }
         onChange={ onChange }
       />

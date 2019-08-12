@@ -1,29 +1,26 @@
-import { ControllerProperties, Layout, PatchRequest } from '../types';
-import BoxController from './controls/Box';
-import TextController from './controls/Text';
+import { ControlProperties, Layout, PatchRequest } from '../types';
+import BoxControl from './controls/BoxControl';
+import TextControl from './controls/TextControl';
 import React from 'react';
 
-function renderControl(props: { controller: ControllerProperties, layout: Layout, onChange: (e: { patchRequest: PatchRequest }) => void }) {
-  const { controller } = props;
-  if (!controller) return null;
+function renderControl(props: { control: ControlProperties, layout: Layout, onChange: (e: { patchRequest: PatchRequest }) => void }) {
+  const { control } = props;
+  if (!control) return null;
 
-  switch (controller.type) {
+  switch (control.type) {
     case 'box':
       return (
-        <BoxController
-          key={ controller.target.id }
-          elementId={ controller.target.id }
-          x={ controller.location.x }
-          y={ controller.location.y }
-          width={ controller.location.width }
-          height={ controller.location.height }
+        <BoxControl
+          key={ control.target.id }
+          elementId={ control.target.id }
+          location={ control.location }
           layout={ props.layout }
-          canMove={ controller.canMove }
-          canResize={ controller.canResize }
-          canEditConstraint={ controller.canEditConstraint }
+          canMove={ control.canMove }
+          canResize={ control.canResize }
+          canEditConstraint={ control.canEditConstraint }
           onChange={ (e) => props.onChange({
             patchRequest: {
-              elementId: controller.target.id,
+              elementId: control.target.id,
               patch: e
             }
           }) }
@@ -39,18 +36,14 @@ function renderControl(props: { controller: ControllerProperties, layout: Layout
       );
     case 'text':
       return (
-        <TextController
-          key={ controller.target.id }
-          x={ controller.location.x }
-          y={ controller.location.y }
-          width={ controller.location.width }
-          height={ controller.location.height }
-          elementId={ controller.target.id }
-          value={ controller.value }
+        <TextControl
+          key={ control.target.id }
+          value={ control.value }
+          location={ control.location }
           onChange={ e => {
             props.onChange({
               patchRequest: {
-                elementId: controller.target.id,
+                elementId: control.target.id,
                 patch: {
                   body: e.target.value
                 }
@@ -64,7 +57,7 @@ function renderControl(props: { controller: ControllerProperties, layout: Layout
   }
 }
 
-export default function ControlLayer(props: { controller: ControllerProperties, layout: Layout, onChange: (e: { patchRequest: PatchRequest }) => void }) {
+export default function ControlLayer(props: { control: ControlProperties, layout: Layout, onChange: (e: { patchRequest: PatchRequest }) => void }) {
   return (
     <svg
       width='100%'

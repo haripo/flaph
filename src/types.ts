@@ -48,7 +48,7 @@ export type PatchRequest = {
   patch: { [key: string]: string }
 }
 
-export type BoxControllerProperties = {
+export type BoxControlProperties = {
   type: 'box'
   location: BoxLocation
   canResize: boolean
@@ -56,15 +56,15 @@ export type BoxControllerProperties = {
   canEditConstraint: boolean
 }
 
-export type TextControllerProperties = {
+export type TextControlProperties = {
   type: 'text'
   value: string
   location: BoxLocation
 }
 
-export type ControllerProperties = (
-  BoxControllerProperties |
-  TextControllerProperties) & {
+export type ControlProperties = (
+  BoxControlProperties |
+  TextControlProperties) & {
   target: LayoutElement
 };
 

@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 import ResizeKnob from './ResizeKnob';
-import { BoxLayoutElement, Layout } from '../../types';
+import { BoxLayoutElement, BoxLocation, Layout } from '../../types';
 
 type Props = {
   elementId: string
 
-  x: number
-  y: number
-  width: number
-  height: number
+  location: BoxLocation
   layout: Layout
 
   canResize: boolean
@@ -32,11 +29,11 @@ type DragStartPositions = {
   }
 }
 
-export default function BoxController(props: Props) {
+export default function BoxControl(props: Props) {
   const padding = 6;
 
-  const [size, setSize] = useState({ width: props.width, height: props.height });
-  const [position, setPosition] = useState({ x: props.x, y: props.y });
+  const [size, setSize] = useState({ width: props.location.width, height: props.location.height });
+  const [position, setPosition] = useState({ x: props.location.x, y: props.location.y });
   const [dragStartPositions, setDragStartPositions] = useState<DragStartPositions | null>(null);
 
   const exitDragging = () => {
