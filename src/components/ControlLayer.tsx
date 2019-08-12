@@ -1,12 +1,16 @@
 import React from 'react';
-import { ControlProperties, Layout, PatchRequest } from '../types';
+
+import { BoxLayoutElement, ControlProperties, Layout, PatchRequest } from '../types';
+
 import BoxControl from './controls/BoxControl';
+import LineControl from './controls/LineControl';
 import TextControl from './controls/TextControl';
 
 type Props = {
   control: ControlProperties
   layout: Layout
   onChange: (e: { patchRequest: PatchRequest }) => void
+  onDisableControl: () => void
 };
 
 function renderControl(props: Props) {
@@ -38,6 +42,37 @@ function renderControl(props: Props) {
               }
             }
           }) }
+        />
+      );
+    case 'line':
+      return (
+        <LineControl
+          key={ control.target.id }
+          location={ control.location }
+          snapPoints={ Object.values(props.layout)
+            .filter((l) => l.type === 'box')
+            .map((l: BoxLayoutElement) => ({ id: l.id, x: l.location.x, y: l.location.y }))
+          }
+          onMoveEnd={ (e) => {
+            if (e.snapId) {
+              const points = e.movedPointIndex === 0 ? {
+                from: e.snapId,
+                to: control.target.model.properties.from
+              } : {
+                from: control.target.model.properties.from,
+                to: e.snapId
+              };
+              props.onChange({
+                patchRequest: {
+                  elementId: points.from,
+                  patch: {
+                    to: points.to
+                  }
+                }
+              });
+              props.onDisableControl();
+            }
+          } }
         />
       );
     case 'text':

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { BoxLayoutElement, BoxLocation, Layout } from '../../types';
-import ResizeKnob from './ResizeKnob';
+import Knob from './Knob';
 
 type Props = {
   elementId: string
@@ -107,19 +107,13 @@ export default function BoxControl(props: Props) {
         />
         { !props.canResize ? null :
           (
-            <ResizeKnob
-              width={ size.width + padding * 2 }
-              height={ size.height + padding * 2 }
-              onResizeStart={ () => {
-                // do nothing
-              } }
-              onResizeEnd={ () => {
-                // do nothing
-              } }
+            <Knob
+              x={ size.width + padding * 2 }
+              y={ size.height + padding * 2 }
               onResizing={ (e) => {
                 const newSize = {
-                  width: size.width + e.offset.x,
-                  height: size.height + e.offset.y
+                  width: size.width + e.movement.x,
+                  height: size.height + e.movement.y
                 };
                 setSize(newSize);
                 props.onChange(

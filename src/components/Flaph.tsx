@@ -39,6 +39,7 @@ export default function Flaph(props: Props) {
         control={ control }
         layout={ props.layout }
         onChange={ onChange }
+        onDisableControl={ () => setControl(null) }
       />
     </div>
   );

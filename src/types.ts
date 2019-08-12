@@ -56,6 +56,11 @@ export type BoxControlProperties = {
   canEditConstraint: boolean
 };
 
+export type LineControlProperties = {
+  type: 'line'
+  location: PathLocation
+};
+
 export type TextControlProperties = {
   type: 'text'
   value: string
@@ -64,6 +69,7 @@ export type TextControlProperties = {
 
 export type ControlProperties = (
   BoxControlProperties |
+  LineControlProperties |
   TextControlProperties) & {
   target: LayoutElement
 };

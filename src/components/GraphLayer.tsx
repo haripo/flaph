@@ -1,6 +1,7 @@
 import React from 'react';
 import { BoxLayoutElement, ControlProperties, Layout, PathLayoutElement } from '../types';
 import { extend } from '../utils/location';
+import Edge from './graphs/Edge';
 import TextBox from './graphs/TextBox';
 
 type Props = {
@@ -8,23 +9,20 @@ type Props = {
   requestControl: (request: ControlProperties) => void
 };
 
-function renderEdge(element: PathLayoutElement) {
-  const result = [];
-  const points = element.location;
-  for (let i = 0; i < points.length - 1; i++) {
-    result.push(
-      <line
-        key={ element.id + '-' + i }
-        x1={ points[i].x }
-        y1={ points[i].y }
-        x2={ points[i + 1].x }
-        y2={ points[i + 1].y }
-        stroke={ 'black' }
-        strokeWidth={ 1 }
-      />
-    );
-  }
-  return result;
+function renderEdge(element: PathLayoutElement, requestControl: (request: ControlProperties) => void) {
+  return (
+    <Edge
+      key={ element.id }
+      location={ element.location }
+      onClick={ (e) => {
+        requestControl({
+          type: 'line',
+          target: element,
+          location: element.location
+        });
+      } }
+    />
+  );
 }
 
 function renderNode(element: BoxLayoutElement, requestControl: (request: ControlProperties) => void) {
@@ -69,7 +67,7 @@ export default function GraphLayer(props: Props) {
             case 'box':
               return renderNode(element, props.requestControl);
             case 'path':
-              return renderEdge(element);
+              return renderEdge(element, props.requestControl);
           }
         })
       }
