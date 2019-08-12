@@ -12,8 +12,6 @@ type Props = {
   canMove: boolean
   canEditConstraint: boolean
 
-  children?: React.ReactNode
-
   onChange: (e: { [key: string]: string }) => void
   onConstraintChange: (e: { type: 'horizontal' | 'vertical', nodes: string[] }) => void
 };
@@ -47,7 +45,6 @@ export default function BoxControl(props: Props) {
 
   return (
     <React.Fragment>
-      { props.children }
       <g transform={ `translate(${ position.x - padding }, ${ position.y - padding })` }>
         <rect
           width={ size.width + padding * 2 }
