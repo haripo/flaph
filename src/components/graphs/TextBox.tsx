@@ -1,25 +1,25 @@
 import React from 'react';
-import { BoxLayoutElement } from '../../types';
+import { BoxLocation } from '../../types';
 
 type Props = {
-  node: BoxLayoutElement,
+  value: string
+  location: BoxLocation
   onClick: React.MouseEventHandler
   onTextClick: React.MouseEventHandler
 }
 
 export default function TextBox(props: Props) {
-  const { node } = props;
+  const { x, y, width, height } = props.location;
 
   return (
     <g
-      key={ node.id }
-      transform={ `translate(${ node.location.x }, ${ node.location.y })` }
+      transform={ `translate(${ x }, ${ y })` }
     >
       <rect
         x={ 0 }
         y={ 0 }
-        width={ node.location.width }
-        height={ node.location.height }
+        width={ width }
+        height={ height }
         stroke={ 'black' }
         fill={ 'white' }
         style={ {
@@ -36,12 +36,12 @@ export default function TextBox(props: Props) {
         }}
       >
         <text
-          x={ node.location.width / 2 }
-          y={ node.location.height / 2 }
+          x={ width / 2 }
+          y={ height / 2 }
           textAnchor="middle"
           dominantBaseline="central"
         >
-          { node.model.properties['body'] }
+          { props.value }
         </text>
       </svg>
     </g>

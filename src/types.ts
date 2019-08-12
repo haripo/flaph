@@ -35,11 +35,11 @@ export type LayoutElementBase = {
 }
 export type BoxLayoutElement = LayoutElementBase & {
   type: 'box',
-  location: { x: number, y: number, width: number, height: number }
+  location: BoxLocation
 };
 export type PathLayoutElement = LayoutElementBase & {
   type: 'path',
-  location: { x: number, y: number }[]
+  location: PathLocation
 };
 export type LayoutElement = BoxLayoutElement | PathLayoutElement;
 
@@ -48,27 +48,34 @@ export type PatchRequest = {
   patch: { [key: string]: string }
 }
 
-export type ControllerCapability = {
+export type BoxControllerProperties = {
+  type: 'box'
+  location: BoxLocation
   canResize: boolean
   canMove: boolean
   canEditConstraint: boolean
 }
 
-export type BoxControllerProperties = {
-  type: 'box'
-  target: LayoutElement
-  capability: ControllerCapability
-}
-
 export type TextControllerProperties = {
   type: 'text'
-  target: LayoutElement
-  bounds: {
-    x: number
-    y: number
-    width: number
-    height: number
-  }
+  value: string
+  location: BoxLocation
 }
 
-export type ControllerProperties = BoxControllerProperties | TextControllerProperties;
+export type ControllerProperties = (
+  BoxControllerProperties |
+  TextControllerProperties) & {
+  target: LayoutElement
+};
+
+export type BoxLocation = {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
+export type PathLocation = {
+  x: number
+  y: number
+}[]

@@ -9,19 +9,18 @@ function renderControl(props: { controller: ControllerProperties, layout: Layout
 
   switch (controller.type) {
     case 'box':
-      if (controller.target.type !== 'box') {
-        throw 'invalid';
-      }
       return (
         <BoxController
           key={ controller.target.id }
           elementId={ controller.target.id }
-          x={ controller.target.location.x }
-          y={ controller.target.location.y }
-          width={ controller.target.location.width }
-          height={ controller.target.location.height }
+          x={ controller.location.x }
+          y={ controller.location.y }
+          width={ controller.location.width }
+          height={ controller.location.height }
           layout={ props.layout }
-          capability={ controller.capability }
+          canMove={ controller.canMove }
+          canResize={ controller.canResize }
+          canEditConstraint={ controller.canEditConstraint }
           onChange={ (e) => props.onChange({
             patchRequest: {
               elementId: controller.target.id,
@@ -42,13 +41,12 @@ function renderControl(props: { controller: ControllerProperties, layout: Layout
       return (
         <TextController
           key={ controller.target.id }
-          x={ controller.bounds.x }
-          y={ controller.bounds.y }
-          width={ controller.bounds.width }
-          height={ controller.bounds.height }
+          x={ controller.location.x }
+          y={ controller.location.y }
+          width={ controller.location.width }
+          height={ controller.location.height }
           elementId={ controller.target.id }
-          layout={ props.layout }
-          value={ controller.target.model.properties['body'] }
+          value={ controller.value }
           onChange={ e => {
             props.onChange({
               patchRequest: {

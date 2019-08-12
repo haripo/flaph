@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
 import ResizeKnob from './ResizeKnob';
-import { BoxLayoutElement, ControllerCapability, Layout } from '../../types';
+import { BoxLayoutElement, Layout } from '../../types';
 
 type Props = {
   elementId: string
+
   x: number
   y: number
   width: number
   height: number
   layout: Layout
-  capability: ControllerCapability
+
+  canResize: boolean
+  canMove: boolean
+  canEditConstraint: boolean
+
   children?: React.ReactNode
+
   onChange: (e: { [key: string]: string }) => void
   onConstraintChange: (e: { type: 'horizontal' | 'vertical', nodes: string[] }) => void
 }
@@ -60,14 +66,14 @@ export default function BoxController(props: Props) {
           onMouseUp={ e => exitDragging() }
           onMouseLeave={ e => exitDragging() }
           onMouseMove={ e => {
-            if (dragStartPositions && (props.capability.canMove || props.capability.canEditConstraint)) {
+            if (dragStartPositions && (props.canMove || props.canEditConstraint)) {
               let newPosition = {
                 x: Math.round(dragStartPositions.box.x - (dragStartPositions.mouse.x - e.clientX)),
                 y: Math.round(dragStartPositions.box.y - (dragStartPositions.mouse.y - e.clientY))
               };
 
               // snap
-              if (props.capability.canEditConstraint) {
+              if (props.canEditConstraint) {
                 for (let element of Object.values(props.layout)) {
                   if (element.type !== 'box') continue;
                   if (Math.abs(element.location.x - newPosition.x) < 15) {
@@ -88,7 +94,7 @@ export default function BoxController(props: Props) {
               }
 
               setPosition(newPosition);
-              if (props.capability.canMove) {
+              if (props.canMove) {
                 props.onChange({
                   x: newPosition.x.toString(),
                   y: newPosition.y.toString()
@@ -105,7 +111,7 @@ export default function BoxController(props: Props) {
           strokeWidth={ 1 }
           fill={ 'none' }
         />
-        { !props.capability.canResize ? null :
+        { !props.canResize ? null :
           (
             <ResizeKnob
               width={ size.width + padding * 2 }

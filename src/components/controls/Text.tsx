@@ -1,5 +1,4 @@
 import React, { ChangeEventHandler } from 'react';
-import { Layout } from '../../types';
 
 type Props = {
   elementId: string
@@ -7,7 +6,6 @@ type Props = {
   y: number
   width: number
   height: number
-  layout: Layout
   value: string
   onChange: ChangeEventHandler<HTMLInputElement>
 }
@@ -20,6 +18,7 @@ export default function TextController(props: Props) {
           width={ props.width }
           height={ props.height }
           stroke={ '#039be5' }
+          strokeWidth={ 2 }
           strokeDasharray={ '2 2' }
           fill={ 'none' }
         />

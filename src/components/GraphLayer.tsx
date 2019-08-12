@@ -1,6 +1,7 @@
 import React from 'react';
 import TextBox from './graphs/TextBox';
 import { BoxLayoutElement, ControllerProperties, Layout, PathLayoutElement } from '../types';
+import { extend } from '../utils/location';
 
 type Props = {
   layout: Layout
@@ -30,25 +31,21 @@ function renderNode(element: BoxLayoutElement, requestControl: (request: Control
   return (
     <TextBox
       key={ element.id }
-      node={ element }
-      onClick={ e => requestControl({
+      value={ element.model.properties['body'] }
+      location={ element.location }
+      onClick={ () => requestControl({
         type: 'box',
         target: element,
-        capability: {
-          canMove: false,
-          canResize: true,
-          canEditConstraint: false
-        }
+        location: element.location,
+        canMove: false,
+        canResize: true,
+        canEditConstraint: false
       }) }
-      onTextClick={ e => requestControl({
+      onTextClick={ () => requestControl({
         type: 'text',
+        value: element.model.properties['body'],
         target: element,
-        bounds: {
-          x: element.location.x + 6,
-          y: element.location.y + 6,
-          width: element.location.width - 12,
-          height: element.location.height - 12
-        }
+        location: extend(element.location, -6)
       }) }
     />
   );
