@@ -1,16 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { DragState, useDrag } from '../../hooks/useDrag';
 
-type Position = {
-  x: number
-  y: number
-};
-
-type ResizeEvent = {
-  movement: Position
-  offset: Position
-  current: Position
-  start: Position
-};
+export type ResizeEvent = DragState;
 
 type Props = {
   x: number
@@ -24,74 +15,33 @@ export default function Knob(props: Props): JSX.Element {
   const knobSize = 8;
   const eventTrapBounds = 10000;
 
-  const [startPosition, setStartPosition] = useState<Position | null>(null);
-  const [currentPosition, setCurrentPosition] = useState<Position | null>(null);
+  const [dragState, dragHandler] = useDrag();
 
   const handleMouseUp = (e: React.MouseEvent) => {
     if (props.onResizeEnd) {
-      props.onResizeEnd({
-        start: startPosition,
-        current: currentPosition,
-        movement: {
-          x: e.clientX - currentPosition.x,
-          y: e.clientY - currentPosition.y
-        },
-        offset: {
-          x: e.clientX - startPosition.x,
-          y: e.clientY - startPosition.y
-        }
-      });
+      props.onResizeEnd(dragState);
     }
-    setStartPosition(null);
-    setCurrentPosition(null);
+    dragHandler.quit();
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (startPosition) {
-      if (props.onResizing) {
-        props.onResizing({
-          start: startPosition,
-          current: currentPosition,
-          movement: {
-            x: e.clientX - currentPosition.x,
-            y: e.clientY - currentPosition.y
-          },
-          offset: {
-            x: e.clientX - startPosition.x,
-            y: e.clientY - startPosition.y
-          }
-        });
-      }
-      setCurrentPosition({
-        x: e.clientX,
-        y: e.clientY
-      });
+    const dragged = dragHandler.process(e.clientX, e.clientY);
+    if (dragged && props.onResizing) {
+      props.onResizing(dragState);
     }
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    setStartPosition({ x: e.clientX, y: e.clientY });
-    setCurrentPosition({ x: e.clientX, y: e.clientY });
+    dragHandler.start(e.clientX, e.clientY);
     if (props.onResizeStart) {
-      props.onResizeStart({
-        start: startPosition,
-        current: currentPosition,
-        movement: {
-          x: 0,
-          y: 0
-        },
-        offset: {
-          x: 0,
-          y: 0
-        }
-      });
+      props.onResizeStart(dragState);
     }
   };
 
   return (
     <React.Fragment>
       {
-        currentPosition === null ? null : (
+        dragState && (
           <rect
             fill="transparent"
             x={ -eventTrapBounds / 2 }

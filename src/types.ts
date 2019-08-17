@@ -85,3 +85,8 @@ export type PathLocation = Array<{
   x: number
   y: number
 }>;
+
+export type Position = {
+  x: number
+  y: number
+};
