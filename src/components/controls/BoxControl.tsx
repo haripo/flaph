@@ -1,26 +1,20 @@
 import React, { useState } from 'react';
 import { useMouseEventDrag } from '../../hooks/useMouseEventDrag';
-import { BoxLayoutElement, BoxLocation, Layout } from '../../types';
+import { BoxChangeEvent, BoxControlProperties, Layout, NodeLayoutElement } from '../../types';
 import Knob, { ResizeEvent } from './Knob';
 
 type Props = {
-  elementId: string
-
-  location: BoxLocation
+  control: BoxControlProperties
   layout: Layout
-
-  canResize: boolean
-  canMove: boolean
-  canEditConstraint: boolean
-
-  onChange: (e: { [key: string]: string }) => void
-  onConstraintChange: (e: { type: 'horizontal' | 'vertical', nodes: string[] }) => void
+  onChange: (e: BoxChangeEvent) => void
 };
 
 export default function BoxControl(props: Props) {
   const padding = 6;
 
-  const [size, setSize] = useState({ width: props.location.width, height: props.location.height });
+  const { control } = props;
+
+  const [size, setSize] = useState({ width: control.location.width, height: control.location.height });
   const [dragState, dragHandler] = useMouseEventDrag();
 
   const exitDrag = () => {
@@ -30,18 +24,26 @@ export default function BoxControl(props: Props) {
   const processDrag = (e: React.MouseEvent) => {
     const dragged = dragHandler.process(e);
     if (dragged) {
-      if (props.canMove) {
+      if (control.canMove) {
         props.onChange({
-          x: dragState.current.x.toString(),
-          y: dragState.current.y.toString()
+          elementId: props.control.target.id,
+          changeType: 'move',
+          patch: {
+            x: dragState.current.x,
+            y: dragState.current.y
+          }
         });
       }
 
-      if (props.canEditConstraint) {
+      if (props.control.canEditConstraint) {
         for (const snap of dragState.snap) {
-          props.onConstraintChange({
-            type: snap.axis,
-            nodes: [snap.id]
+          props.onChange({
+            elementId: props.control.target.id,
+            changeType: 'change-constraint',
+            patch: {
+              axis: snap.axis,
+              targets: [snap.id]
+            }
           });
         }
       }
@@ -51,17 +53,17 @@ export default function BoxControl(props: Props) {
   const startDrag = (e: React.MouseEvent) => {
     let snaps;
 
-    if (props.canEditConstraint) {
+    if (props.control.canEditConstraint) {
       snaps = Object.values(props.layout)
-        .filter((l) => l.type === 'box')
-        .map((l: BoxLayoutElement) => ({
+        .filter((l) => l.type === 'node')
+        .map((l: NodeLayoutElement) => ({
           id: l.id,
           x: l.location.x,
           y: l.location.y
         }));
     }
 
-    dragHandler.start(e, props.location, snaps);
+    dragHandler.start(e, props.control.location, snaps);
   };
 
   const processResize = (e: ResizeEvent) => {
@@ -70,18 +72,20 @@ export default function BoxControl(props: Props) {
       height: size.height + e.movement.y
     };
     setSize(newSize);
-    props.onChange(
-      {
-        width: newSize.width.toString(),
-        height: newSize.height.toString()
+    props.onChange({
+      elementId: props.control.target.id,
+      changeType: 'resize',
+      patch: {
+        width: newSize.width,
+        height: newSize.height
       }
-    );
+    });
   };
 
   const position = dragState ? {
-    x: props.location.x + dragState.offset.x,
-    y: props.location.y + dragState.offset.y
-  } : props.location;
+    x: props.control.location.x + dragState.offset.x,
+    y: props.control.location.y + dragState.offset.y
+  } : props.control.location;
 
   return (
     <React.Fragment>
@@ -106,7 +110,7 @@ export default function BoxControl(props: Props) {
           strokeWidth={ 1 }
           fill={ 'none' }
         />
-        { !props.canResize ? null :
+        { !props.control.canResize ? null :
           (
             <Knob
               x={ size.width + padding * 2 }

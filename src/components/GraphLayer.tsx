@@ -1,53 +1,12 @@
 import React from 'react';
-import { BoxLayoutElement, ControlProperties, Layout, PathLayoutElement } from '../types';
-import { extend } from '../utils/location';
+import { ControlProperties, Layout } from '../types';
 import Edge from './graphs/Edge';
-import TextBox from './graphs/TextBox';
+import Node from './graphs/Node';
 
 type Props = {
   layout: Layout
   requestControl: (request: ControlProperties) => void
 };
-
-function renderEdge(element: PathLayoutElement, requestControl: (request: ControlProperties) => void) {
-  return (
-    <Edge
-      key={ element.id }
-      location={ element.location }
-      onClick={ (e) => {
-        requestControl({
-          type: 'line',
-          target: element,
-          location: element.location
-        });
-      } }
-    />
-  );
-}
-
-function renderNode(element: BoxLayoutElement, requestControl: (request: ControlProperties) => void) {
-  return (
-    <TextBox
-      key={ element.id }
-      value={ element.model.properties.body }
-      location={ element.location }
-      onClick={ () => requestControl({
-        type: 'box',
-        target: element,
-        location: element.location,
-        canMove: false,
-        canResize: true,
-        canEditConstraint: false
-      }) }
-      onTextClick={ () => requestControl({
-        type: 'text',
-        value: element.model.properties.body,
-        target: element,
-        location: extend(element.location, -6)
-      }) }
-    />
-  );
-}
 
 export default function GraphLayer(props: Props) {
   return (
@@ -63,11 +22,15 @@ export default function GraphLayer(props: Props) {
     >
       {
         Object.values(props.layout).map((element) => {
+          const commonProps = {
+            key: element.id,
+            onControlRequested: props.requestControl
+          };
           switch (element.type) {
-            case 'box':
-              return renderNode(element, props.requestControl);
-            case 'path':
-              return renderEdge(element, props.requestControl);
+            case 'node':
+              return <Node { ...commonProps } layout={ element } />;
+            case 'edge':
+              return <Edge { ...commonProps } layout={ element } />;
           }
         })
       }

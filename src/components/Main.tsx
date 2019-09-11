@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { layout } from '../designers/dagre';
-import { parse, patch } from '../documenters/simple';
+import { getPatchRequest, parse, patch } from '../documenters/simple';
 import Flaph from './Flaph';
-// import { layout } from '../designers/cola';
 
 const defaultSource = `1: {
   body: Node1
@@ -38,6 +37,7 @@ const defaultSource = `1: {
 export default function Main() {
   const [source, setSource] = useState(defaultSource);
   const parseResult = parse(source);
+  const layouted = parseResult.status === 'succeeded' ? layout(parseResult.model) : null;
 
   return (
     <div style={ {
@@ -56,21 +56,23 @@ export default function Main() {
           fontSize: 16
         } }
       />
-      <div style={{
+      <div style={ {
         marginLeft: 20,
         flex: 1
-      }}>
+      } }>
         {
           parseResult.status === 'succeeded' ? (
-          <Flaph
-            layout={ layout(parseResult.model) }
-            onChange={ ({ patchRequest }) => {
-              setSource(patch(source, patchRequest, parseResult.sourceMap));
-            }}
-          />
-        ) : (
-          <div>parse error</div>
-        )}
+            <Flaph
+              layout={ layouted }
+              onChange={ (e) => {
+                const r = getPatchRequest(e, parseResult.model);
+                console.info('patch', r);
+                setSource(patch(source, r, parseResult.sourceMap));
+              } }
+            />
+          ) : (
+            <div>parse error</div>
+          ) }
       </div>
     </div>
   );

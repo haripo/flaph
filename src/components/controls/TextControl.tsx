@@ -1,14 +1,14 @@
-import React, { ChangeEventHandler } from 'react';
-import { BoxLocation } from '../../types';
+import React from 'react';
+import { TextChangeEvent, Layout, TextControlProperties } from '../../types';
 
 type Props = {
-  value: string
-  location: BoxLocation
-  onChange: ChangeEventHandler<HTMLInputElement>
+  control: TextControlProperties
+  layout: Layout
+  onChange: (e: TextChangeEvent) => void
 };
 
 export default function TextControl(props: Props) {
-  const { x, y, width, height } = props.location;
+  const { x, y, width, height } = props.control.location;
 
   return (
     <React.Fragment>
@@ -23,8 +23,14 @@ export default function TextControl(props: Props) {
         />
         <foreignObject width={ width } height={ height }>
           <input
-            defaultValue={ props.value }
-            onChange={ props.onChange }
+            defaultValue={ props.control.value }
+            onChange={ (e) => { props.onChange({
+              changeType: 'change-text',
+              elementId: props.control.target.id,
+              patch: {
+                value: e.target.value
+              }
+            }) } }
             autoFocus={ true }
             style={ {
               textAlign: 'center',

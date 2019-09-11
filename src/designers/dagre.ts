@@ -1,5 +1,12 @@
 import dagre from 'dagre';
-import { GraphModel, Layout, LayoutElement } from '../types';
+import {
+  EdgeGraphElement,
+  EdgeLayoutElement,
+  GraphModel,
+  Layout,
+  NodeGraphElement,
+  NodeLayoutElement
+} from '../types';
 
 export function layout(graphModel: GraphModel): Layout {
   const graph = new dagre.graphlib.Graph();
@@ -8,56 +15,56 @@ export function layout(graphModel: GraphModel): Layout {
     return {};
   }));
 
-  // TODO: ensure element.properties.{body, width, height} presents
+  for (const element of Object.values(graphModel)) {
+    if (element.type === 'node') {
+      graph.setNode(element.id, {
+        id: element.id,
+        label: element.properties.body,
+        width: element.properties.width || 100,
+        height: element.properties.height || 100
+      });
+    }
 
-  for (const element of Object.values(graphModel.elements)) {
-    graph.setNode(element.id, {
-      id: element.id,
-      label: element.properties.body,
-      width: parseInt(element.properties.width || '100', 10),
-      height: parseInt(element.properties.height || '100', 10)
-    });
-
-    if (element.properties.to) {
-      graph.setEdge(element.id, element.properties.to);
+    if (element.type === 'edge') {
+      graph.setEdge(
+        element.properties.from,
+        element.properties.to,
+        {
+          id: element.id,
+        });
     }
   }
 
   dagre.layout(graph);
 
-  const nodes: LayoutElement[] = graph.nodes()
-    .map((v) => graph.node(v))
-    .map((v) => {
-      const model = graphModel.elements[v.id];
-      return {
-        id: model.id,
-        model,
-        type: 'box',
-        location: {
-          width: v.width,
-          height: v.height,
-          x: v.x - v.width / 2,
-          y: v.y - v.height / 2
-        }
-      };
-    });
+  const nodes: NodeLayoutElement[] = graph.nodes()
+  .map((v) => graph.node(v))
+  .map((v) => {
+    const model = graphModel[v.id] as NodeGraphElement;
+    return {
+      id: model.id,
+      model,
+      type: 'node',
+      location: {
+        width: v.width,
+        height: v.height,
+        x: v.x - v.width / 2,
+        y: v.y - v.height / 2
+      }
+    };
+  });
 
-  const edges: LayoutElement[] = graph.edges()
-    .map((e) => {
-      return {
-        id: `@edge-${e.v}-${e.w}`,
-        model: {
-          id: null,
-          type: 'edge',
-          properties: {
-            from: e.v,
-            to: e.w
-          }
-        },
-        type: 'path',
-        location: graph.edge(e).points
-      };
-    });
+  const edges: EdgeLayoutElement[] = graph.edges()
+  .map((e) => graph.edge(e))
+  .map((e) => {
+    const model = graphModel[e.id] as EdgeGraphElement;
+    return {
+      id: model.id,
+      model,
+      type: 'edge',
+      location: e.points
+    };
+  });
 
   const result = {};
   for (const element of [...nodes, ...edges]) {

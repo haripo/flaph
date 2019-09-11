@@ -1,4 +1,4 @@
-import { GraphModel, GraphSourceMap, PatchRequest } from '../../types';
+import { ChangeEvent, GraphModel, GraphSourceMap, PatchRequest } from '../../types';
 import peg from './simple.pegjs';
 
 type ParseResult = {
@@ -30,23 +30,54 @@ export function parse(graphSource: string): ParseResult {
   try {
     const parsed = peg.parse(graphSource, { tracer: new Tracer() });
 
-    const model: GraphModel = {
-      elements: {},
-      constraints: {}
-    };
+    const model: GraphModel = {};
 
     for (const e of parsed) {
       if (e.id.startsWith('@constraint')) {
-        model.constraints[e.id] = {
-          id: e.id,
-          properties: e.properties
-        };
+        // model.push({
+        //   id: e.id,
+        //   type: 'constraint'
+        // });
       } else {
-        model.elements[e.id] = {
+        model[e.id] = {
           id: e.id,
           type: 'node',
-          properties: e.properties
+          properties: {
+            body: e.properties.body,
+            width: e.properties.width ? parseInt(e.properties.width, 10) : undefined,
+            height: e.properties.height ? parseInt(e.properties.height, 10) : undefined
+          },
+          controlProperties: {
+            canMove: false,
+            canResize: true,
+            canEditConstraint: false
+          }
         };
+
+        if (e.properties.to !== undefined) {
+          const id = `edge-${e.id}-${e.properties.to}`;
+          model[id] = {
+            id: id,
+            type: 'edge',
+            properties: {
+              from: e.id,
+              to: e.properties.to as string
+            },
+            controlProperties: {
+              snaps: []
+            }
+          };
+        }
+      }
+    }
+
+    // append snap locations
+    const snaps = Object.values(model)
+      .filter((l) => l.type === 'node')
+      .map((l) => l.id);
+    for (let e of Object.values(model)) {
+      if (e.type === 'edge') {
+        e.controlProperties.snaps = snaps;
       }
     }
 
@@ -95,4 +126,51 @@ export function patch(source: string, request: PatchRequest, sourceMap: GraphSou
     source += '\n}';
   }
   return source;
+}
+
+export function getPatchRequest(e: ChangeEvent, model: GraphModel): PatchRequest | null {
+  switch (model[e.elementId].type) {
+    case 'node':
+      switch (e.changeType) {
+        case 'move':
+          return {
+            elementId: e.elementId,
+            patch: {
+              x: e.patch.x.toString(),
+              y: e.patch.y.toString(),
+            }
+          };
+        case 'resize':
+          return {
+            elementId: e.elementId,
+            patch: {
+              width: e.patch.width.toString(),
+              height: e.patch.height.toString(),
+            }
+          };
+        case 'change-text':
+          return {
+            elementId: e.elementId,
+            patch: {
+              body: e.patch.value
+            }
+          };
+        default:
+          return null;
+      }
+    case 'edge':
+      switch (e.changeType) {
+        case 'change-link':
+          return {
+            elementId: e.patch.from,
+            patch: {
+              to: e.patch.to
+            }
+          };
+        default:
+          return null;
+      }
+    default:
+      return null;
+  }
 }

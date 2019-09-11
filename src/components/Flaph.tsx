@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
-import { ControlProperties, Layout } from '../types';
-import ControlLayer from './ControlLayer';
+import { ChangeEvent, ControlProperties, Layout } from '../types';
+import ControlLayer  from './ControlLayer';
 import GraphLayer from './GraphLayer';
 
-type PatchRequestHandler = ({ patchRequest: PatchRequest }) => void;
 type Props = {
   layout: Layout
-  onChange: PatchRequestHandler
+  onChange: (e: ChangeEvent) => void
 };
 
 export default function Flaph(props: Props) {
-  const { onChange } = props;
   const [control, setControl] = useState<ControlProperties | null>(null);
+
+  const handleChange = (e: ChangeEvent) => {
+    if (e.clearControls) {
+      setControl(null);
+    }
+    props.onChange(e);
+  };
 
   return (
     <div
@@ -38,8 +43,7 @@ export default function Flaph(props: Props) {
       <ControlLayer
         control={ control }
         layout={ props.layout }
-        onChange={ onChange }
-        onDisableControl={ () => setControl(null) }
+        onChange={ handleChange }
       />
     </div>
   );

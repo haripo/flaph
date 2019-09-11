@@ -1,35 +1,31 @@
 import React, { useState } from 'react';
-import { PathLocation } from '../../types';
+import { EdgeGraphElement, Layout, LineChangeEvent, LineControlProperties } from '../../types';
 import Knob from './Knob';
 
-export interface MoveEndEvent {
-  x: number;
-  y: number;
-  movedPointIndex: number;
-  snapId: string;
-}
-
-export interface SnapPoint {
-  id: string;
-  x: number;
-  y: number;
-}
-
 type Props = {
-  location: PathLocation
-  snapPoints: SnapPoint[]
-  onMoveEnd: (e: MoveEndEvent) => void
+  control: LineControlProperties
+  layout: Layout
+  onChange: (e: LineChangeEvent) => void
 };
 
 export default function LineControl(props: Props) {
-  const [points, setPoints] = useState(props.location);
+  const [points, setPoints] = useState(props.control.location);
   const [dragStartPositions, setDragStartPositions] = useState<{ x: number, y: number } | null>(null);
 
-  const getSnapped = ({ x, y }: { x: number, y: number }): SnapPoint | null => {
-    for (const snap of props.snapPoints) {
-      if (Math.abs(snap.x - x) < 15 &&
-        Math.abs(snap.y - y) < 15) {
-        return snap;
+  const getSnapped = ({ x, y }: { x: number, y: number }): { id: string, x: number, y: number } | null => {
+    for (const snap of props.control.snaps) {
+      const target = props.layout[snap];
+      if (target.type === 'node') {
+        const snapX = target.location.x + target.location.width / 2;
+        const snapY = target.location.y + target.location.height / 2;
+        if (Math.abs(snapX - x) < target.location.width / 2 &&
+          Math.abs(snapY - y) < target.location.height / 2) {
+          return {
+            id: target.id,
+            x: snapX,
+            y: snapY
+          };
+        }
       }
     }
     return null;
@@ -87,13 +83,27 @@ export default function LineControl(props: Props) {
         } }
         onResizeEnd={ () => {
           const snapped = getSnapped(points[knobPoint]);
-          props.onMoveEnd({
-            x: points[knobPoint].x,
-            y: points[knobPoint].y,
-            snapId: snapped ? snapped.id : null,
-            movedPointIndex: knobPoint
-          });
-          setPoints(props.location);
+          const snapId = snapped ? snapped.id : null;
+          if (snapId) {
+            const p = knobPoint === 0 ? {
+              from: snapId,
+              to: (props.control.target.model as EdgeGraphElement).properties.from
+            } : {
+              from: (props.control.target.model as EdgeGraphElement).properties.from,
+              to: snapId
+            };
+
+            props.onChange({
+              elementId: props.control.target.id,
+              changeType: 'change-link',
+              patch: {
+                from: p.from,
+                to: p.to
+              },
+              clearControls: true
+            });
+          }
+          setPoints(props.control.location);
         }}
       />
     </React.Fragment>

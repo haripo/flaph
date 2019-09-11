@@ -1,23 +1,37 @@
 
-export type GraphModel = {
-  elements: { [id: string]: ModelElement }
-  constraints: { [id: string]: ModelConstraint }
-};
-
-export type ModelElement = {
+type GraphModelElementBase = {
   id: string
   type: string
-  properties: {
-    [key: string]: string
-  }
-};
+}
 
-export type ModelConstraint = {
-  id: string
+export type NodeGraphElement = GraphModelElementBase & {
+  type: 'node'
   properties: {
-    [key: string]: string
+    body: string
+    width?: number
+    height?: number
   }
-};
+  controlProperties: {
+    canMove: boolean
+    canResize: boolean
+    canEditConstraint: boolean
+  }
+}
+
+export type EdgeGraphElement = GraphModelElementBase & {
+  type: 'edge'
+  properties: {
+    // body: string
+    from: string
+    to: string
+  }
+  controlProperties: {
+    snaps: string[]
+  }
+}
+
+export type GraphElement = NodeGraphElement | EdgeGraphElement;
+export type GraphModel = { [id: string]: GraphElement };
 
 export type GraphSourceMap = {
   [elementId: string]: {
@@ -28,20 +42,25 @@ export type GraphSourceMap = {
   }
 };
 
-export type Layout = { [id: string]: LayoutElement };
-export type LayoutElementBase = {
+type LayoutElementBase = {
   id: string | null
-  model: ModelElement | null
+  model: GraphModelElementBase | null
 };
-export type BoxLayoutElement = LayoutElementBase & {
-  type: 'box',
+
+export type NodeLayoutElement = LayoutElementBase & {
+  type: 'node'
   location: BoxLocation
+  model: NodeGraphElement
 };
-export type PathLayoutElement = LayoutElementBase & {
-  type: 'path',
+
+export type EdgeLayoutElement = LayoutElementBase & {
+  type: 'edge'
   location: PathLocation
+  model: EdgeGraphElement
 };
-export type LayoutElement = BoxLayoutElement | PathLayoutElement;
+
+export type LayoutElement = NodeLayoutElement | EdgeLayoutElement;
+export type Layout = { [id: string]: LayoutElement };
 
 export type PatchRequest = {
   elementId: string
@@ -49,7 +68,8 @@ export type PatchRequest = {
 };
 
 export type BoxControlProperties = {
-  type: 'box'
+  type: 'node'
+  target: LayoutElement
   location: BoxLocation
   canResize: boolean
   canMove: boolean
@@ -58,21 +78,22 @@ export type BoxControlProperties = {
 
 export type LineControlProperties = {
   type: 'line'
+  target: LayoutElement
   location: PathLocation
+  snaps: string[]
 };
 
 export type TextControlProperties = {
   type: 'text'
+  target: LayoutElement
   value: string
   location: BoxLocation
 };
 
-export type ControlProperties = (
+export type ControlProperties =
   BoxControlProperties |
   LineControlProperties |
-  TextControlProperties) & {
-  target: LayoutElement
-};
+  TextControlProperties;
 
 export type BoxLocation = {
   x: number
@@ -90,3 +111,58 @@ export type Position = {
   x: number
   y: number
 };
+
+
+export type ChangeEventBase = {
+  elementId: string
+  changeType: string
+  clearControls?: boolean
+};
+
+export type BoxMoveEvent = ChangeEventBase & {
+  changeType: 'move'
+  patch: {
+    x: number
+    y: number
+  }
+}
+
+export type BoxResizeEvent = ChangeEventBase & {
+  changeType: 'resize'
+  patch: {
+    width: number
+    height: number
+  }
+}
+
+export type BoxChangeConstraintEvent = ChangeEventBase & {
+  changeType: 'change-constraint'
+  patch: {
+    axis: 'horizontal' | 'vertical'
+    targets: string[]
+  }
+}
+
+export type BoxChangeEvent =
+  BoxMoveEvent |
+  BoxResizeEvent |
+  BoxChangeConstraintEvent;
+
+export type LineChangeLinkEvent = ChangeEventBase & {
+  changeType: 'change-link'
+  patch: {
+    from: string
+    to: string
+  }
+}
+
+export type LineChangeEvent = LineChangeLinkEvent;
+
+export type TextChangeEvent = ChangeEventBase & {
+  changeType: 'change-text'
+  patch: {
+    value: string
+  }
+}
+
+export type ChangeEvent = BoxChangeEvent | LineChangeEvent | TextChangeEvent;

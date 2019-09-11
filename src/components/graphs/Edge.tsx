@@ -1,14 +1,24 @@
 import React from 'react';
-import { BoxLocation, PathLocation } from '../../types';
+import { ControlProperties, EdgeLayoutElement } from '../../types';
 
 type Props = {
-  location: PathLocation
-  onClick: React.MouseEventHandler
+  layout: EdgeLayoutElement
+  onControlRequested: (e: ControlProperties) => void
 };
 
 export default function Edge(props: Props) {
   const result = [];
-  const points = props.location;
+  const points = props.layout.location;
+
+  function handleClick() {
+    props.onControlRequested({
+      type: 'line',
+      target: props.layout,
+      location: props.layout.location,
+      ...props.layout.model.controlProperties
+    });
+  }
+
   for (let i = 0; i < points.length - 1; i++) {
     result.push(
       <React.Fragment key={ i }>
@@ -21,7 +31,7 @@ export default function Edge(props: Props) {
           strokeWidth={ 20 }
           strokeLinecap={ 'round' }
           style={ { pointerEvents: 'all' } }
-          onClick={ props.onClick }
+          onClick={ handleClick }
         />
         <line
           x1={ points[i].x }
