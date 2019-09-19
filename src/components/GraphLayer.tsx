@@ -28,9 +28,9 @@ export default function GraphLayer(props: Props) {
           };
           switch (element.type) {
             case 'node':
-              return <Node { ...commonProps } layout={ element } />;
+              return <Node { ...commonProps } layout={ element }/>;
             case 'edge':
-              return <Edge { ...commonProps } layout={ element } />;
+              return <Edge { ...commonProps } layout={ element }/>;
           }
         })
       }

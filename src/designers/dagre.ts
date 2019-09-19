@@ -38,33 +38,33 @@ export function layoutGraph(graphModel: GraphModel): Layout {
   dagre.layout(graph);
 
   const nodes: NodeLayoutElement[] = graph.nodes()
-  .map((v) => graph.node(v))
-  .map((v) => {
-    const model = graphModel[v.id] as NodeGraphElement;
-    return {
-      id: model.id,
-      model,
-      type: 'node',
-      location: {
-        width: v.width,
-        height: v.height,
-        x: v.x - v.width / 2,
-        y: v.y - v.height / 2
-      }
-    };
-  });
+    .map((v) => graph.node(v))
+    .map((v) => {
+      const model = graphModel[v.id] as NodeGraphElement;
+      return {
+        id: model.id,
+        model,
+        type: 'node',
+        location: {
+          width: v.width,
+          height: v.height,
+          x: v.x - v.width / 2,
+          y: v.y - v.height / 2
+        }
+      };
+    });
 
   const edges: EdgeLayoutElement[] = graph.edges()
-  .map((e) => graph.edge(e))
-  .map((e) => {
-    const model = graphModel[e.id] as EdgeGraphElement;
-    return {
-      id: model.id,
-      model,
-      type: 'edge',
-      location: e.points
-    };
-  });
+    .map((e) => graph.edge(e))
+    .map((e) => {
+      const model = graphModel[e.id] as EdgeGraphElement;
+      return {
+        id: model.id,
+        model,
+        type: 'edge',
+        location: e.points
+      };
+    });
 
   const result = {};
   for (const element of [...nodes, ...edges]) {
