@@ -2,7 +2,7 @@
 type GraphModelElementBase = {
   id: string
   type: string
-}
+};
 
 export type NodeGraphElement = GraphModelElementBase & {
   type: 'node'
@@ -16,7 +16,7 @@ export type NodeGraphElement = GraphModelElementBase & {
     canResize: boolean
     canEditConstraint: boolean
   }
-}
+};
 
 export type EdgeGraphElement = GraphModelElementBase & {
   type: 'edge'
@@ -28,7 +28,7 @@ export type EdgeGraphElement = GraphModelElementBase & {
   controlProperties: {
     snaps: string[]
   }
-}
+};
 
 export type GraphElement = NodeGraphElement | EdgeGraphElement;
 export type GraphModel = { [id: string]: GraphElement };
@@ -112,7 +112,6 @@ export type Position = {
   y: number
 };
 
-
 export type ChangeEventBase = {
   elementId: string
   changeType: string
@@ -125,7 +124,7 @@ export type BoxMoveEvent = ChangeEventBase & {
     x: number
     y: number
   }
-}
+};
 
 export type BoxResizeEvent = ChangeEventBase & {
   changeType: 'resize'
@@ -133,7 +132,7 @@ export type BoxResizeEvent = ChangeEventBase & {
     width: number
     height: number
   }
-}
+};
 
 export type BoxChangeConstraintEvent = ChangeEventBase & {
   changeType: 'change-constraint'
@@ -141,7 +140,7 @@ export type BoxChangeConstraintEvent = ChangeEventBase & {
     axis: 'horizontal' | 'vertical'
     targets: string[]
   }
-}
+};
 
 export type BoxChangeEvent =
   BoxMoveEvent |
@@ -154,7 +153,7 @@ export type LineChangeLinkEvent = ChangeEventBase & {
     from: string
     to: string
   }
-}
+};
 
 export type LineChangeEvent = LineChangeLinkEvent;
 
@@ -163,6 +162,6 @@ export type TextChangeEvent = ChangeEventBase & {
   patch: {
     value: string
   }
-}
+};
 
 export type ChangeEvent = BoxChangeEvent | LineChangeEvent | TextChangeEvent;

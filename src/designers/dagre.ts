@@ -8,7 +8,7 @@ import {
   NodeLayoutElement
 } from '../types';
 
-export function layout(graphModel: GraphModel): Layout {
+export function layoutGraph(graphModel: GraphModel): Layout {
   const graph = new dagre.graphlib.Graph();
   graph.setGraph({});
   graph.setDefaultEdgeLabel(((v, w) => {
@@ -30,7 +30,7 @@ export function layout(graphModel: GraphModel): Layout {
         element.properties.from,
         element.properties.to,
         {
-          id: element.id,
+          id: element.id
         });
     }
   }

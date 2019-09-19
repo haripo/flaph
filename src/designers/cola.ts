@@ -13,7 +13,7 @@
 //   return Math.min(Math.max(value, lower), upper);
 // }
 //
-// export function layout(graphModel: GraphModel): Layout {
+// export function layoutGraph(graphModel: GraphModel): Layout {
 //   const cola = new Cola.Layout();
 //   const nodePadding = 20;
 //

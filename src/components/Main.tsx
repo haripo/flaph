@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { layout } from '../designers/dagre';
-import { getPatchRequest, parse, patch } from '../documenters/simple';
 import Flaph from './Flaph';
 
 const defaultSource = `1: {
@@ -36,8 +34,6 @@ const defaultSource = `1: {
 
 export default function Main() {
   const [source, setSource] = useState(defaultSource);
-  const parseResult = parse(source);
-  const layouted = parseResult.status === 'succeeded' ? layout(parseResult.model) : null;
 
   return (
     <div style={ {
@@ -60,19 +56,12 @@ export default function Main() {
         marginLeft: 20,
         flex: 1
       } }>
-        {
-          parseResult.status === 'succeeded' ? (
-            <Flaph
-              layout={ layouted }
-              onChange={ (e) => {
-                const r = getPatchRequest(e, parseResult.model);
-                console.info('patch', r);
-                setSource(patch(source, r, parseResult.sourceMap));
-              } }
-            />
-          ) : (
-            <div>parse error</div>
-          ) }
+        <Flaph
+          source={ source }
+          onChange={ (e) => {
+            setSource(e.source);
+          } }
+        />
       </div>
     </div>
   );

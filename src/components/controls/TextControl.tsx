@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextChangeEvent, Layout, TextControlProperties } from '../../types';
+import { Layout, TextChangeEvent, TextControlProperties } from '../../types';
 
 type Props = {
   control: TextControlProperties
@@ -30,7 +30,7 @@ export default function TextControl(props: Props) {
               patch: {
                 value: e.target.value
               }
-            }) } }
+            }); } }
             autoFocus={ true }
             style={ {
               textAlign: 'center',

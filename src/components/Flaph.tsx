@@ -1,21 +1,34 @@
 import React, { useState } from 'react';
-import { ChangeEvent, ControlProperties, Layout } from '../types';
-import ControlLayer  from './ControlLayer';
+import { layoutGraph } from '../designers/dagre';
+import { parse, patch } from '../documenters/simple';
+import { ChangeEvent, ControlProperties } from '../types';
+import ControlLayer from './ControlLayer';
 import GraphLayer from './GraphLayer';
 
 type Props = {
-  layout: Layout
-  onChange: (e: ChangeEvent) => void
+  source: string,
+  onChange: (e: { source: string }) => void
 };
 
 export default function Flaph(props: Props) {
   const [control, setControl] = useState<ControlProperties | null>(null);
 
+  const parseResult = parse(props.source);
+  if (parseResult.status === 'failed') {
+    return <span>Failed to parse</span>;
+  }
+
+  const layout = layoutGraph(parseResult.model);
+  if (layout === null) {
+    return <span>Failed to layout</span>;
+  }
+
   const handleChange = (e: ChangeEvent) => {
     if (e.clearControls) {
       setControl(null);
     }
-    props.onChange(e);
+    const updated = patch(props.source, e, parseResult.model, parseResult.sourceMap);
+    props.onChange({ source: updated });
   };
 
   return (
@@ -37,12 +50,12 @@ export default function Flaph(props: Props) {
         onClick={ () => setControl(null) }
       />
       <GraphLayer
-        layout={ props.layout }
+        layout={ layout }
         requestControl={ (e) => setControl(e) }
       />
       <ControlLayer
         control={ control }
-        layout={ props.layout }
+        layout={ layout }
         onChange={ handleChange }
       />
     </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ControlProperties, LayoutElement, NodeLayoutElement } from '../../types';
-import { extend } from "../../utils/location";
+import { extend } from '../../utils/location';
 
 type Props = {
   layout: NodeLayoutElement,

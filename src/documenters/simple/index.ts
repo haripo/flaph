@@ -57,7 +57,7 @@ export function parse(graphSource: string): ParseResult {
         if (e.properties.to !== undefined) {
           const id = `edge-${e.id}-${e.properties.to}`;
           model[id] = {
-            id: id,
+            id,
             type: 'edge',
             properties: {
               from: e.id,
@@ -75,7 +75,7 @@ export function parse(graphSource: string): ParseResult {
     const snaps = Object.values(model)
       .filter((l) => l.type === 'node')
       .map((l) => l.id);
-    for (let e of Object.values(model)) {
+    for (const e of Object.values(model)) {
       if (e.type === 'edge') {
         e.controlProperties.snaps = snaps;
       }
@@ -94,41 +94,7 @@ export function parse(graphSource: string): ParseResult {
   }
 }
 
-export function patch(source: string, request: PatchRequest, sourceMap: GraphSourceMap): string {
-  let patchSlideSize = 0;
-  if (request.elementId in sourceMap) {
-    for (const [key, patchText] of Object.entries(request.patch)) {
-      const range = sourceMap[request.elementId][key];
-      if (range) {
-        // replace value
-        source =
-          source.slice(0, range.start + patchSlideSize)
-          + patchText
-          + source.slice(range.end + patchSlideSize);
-        patchSlideSize += patchText.length - (range.end - range.start);
-      } else {
-        // insert new key-value
-        const newLine = `\n  ${ key }: ${ patchText }`;
-        const insertPosition = Object.values(sourceMap[request.elementId])
-          .map((r) => r.end)
-          .reduce((p, c) => p > c ? p : c);
-        source =
-          source.slice(0, insertPosition + patchSlideSize)
-          + newLine
-          + source.slice(insertPosition + patchSlideSize);
-        patchSlideSize += newLine.length;
-      }
-    }
-  } else {
-    // create new element
-    source += `${request.elementId}: {\n`;
-    source += Object.entries(request.patch).map(([k, v]) => `  ${k}: ${v}`).join('\n');
-    source += '\n}';
-  }
-  return source;
-}
-
-export function getPatchRequest(e: ChangeEvent, model: GraphModel): PatchRequest | null {
+function makePatchFromEvent(e: ChangeEvent, model: GraphModel): PatchRequest | null {
   switch (model[e.elementId].type) {
     case 'node':
       switch (e.changeType) {
@@ -137,7 +103,7 @@ export function getPatchRequest(e: ChangeEvent, model: GraphModel): PatchRequest
             elementId: e.elementId,
             patch: {
               x: e.patch.x.toString(),
-              y: e.patch.y.toString(),
+              y: e.patch.y.toString()
             }
           };
         case 'resize':
@@ -145,7 +111,7 @@ export function getPatchRequest(e: ChangeEvent, model: GraphModel): PatchRequest
             elementId: e.elementId,
             patch: {
               width: e.patch.width.toString(),
-              height: e.patch.height.toString(),
+              height: e.patch.height.toString()
             }
           };
         case 'change-text':
@@ -173,4 +139,40 @@ export function getPatchRequest(e: ChangeEvent, model: GraphModel): PatchRequest
     default:
       return null;
   }
+}
+
+export function patch(source: string, e: ChangeEvent, model: GraphModel, sourceMap: GraphSourceMap): string {
+  const patchObject = makePatchFromEvent(e, model);
+
+  let patchSlideSize = 0;
+  if (patchObject.elementId in sourceMap) {
+    for (const [key, patchText] of Object.entries(patchObject.patch)) {
+      const range = sourceMap[patchObject.elementId][key];
+      if (range) {
+        // replace value
+        source =
+          source.slice(0, range.start + patchSlideSize)
+          + patchText
+          + source.slice(range.end + patchSlideSize);
+        patchSlideSize += patchText.length - (range.end - range.start);
+      } else {
+        // insert new key-value
+        const newLine = `\n  ${ key }: ${ patchText }`;
+        const insertPosition = Object.values(sourceMap[patchObject.elementId])
+          .map((r) => r.end)
+          .reduce((p, c) => p > c ? p : c);
+        source =
+          source.slice(0, insertPosition + patchSlideSize)
+          + newLine
+          + source.slice(insertPosition + patchSlideSize);
+        patchSlideSize += newLine.length;
+      }
+    }
+  } else {
+    // create new element
+    source += `${patchObject.elementId}: {\n`;
+    source += Object.entries(patchObject.patch).map(([k, v]) => `  ${k}: ${v}`).join('\n');
+    source += '\n}';
+  }
+  return source;
 }
