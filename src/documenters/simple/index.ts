@@ -87,7 +87,7 @@ export function parse(graphSource: string): ParseResult {
       sourceMap: arrayToObject('id', 'sourceMap', parsed)
     };
   } catch (e) {
-    console.error(e);
+    console.warn(e);
     return {
       status: 'failed'
     };
