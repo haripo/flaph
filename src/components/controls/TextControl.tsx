@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Layout, TextChangeEvent, TextControlProperties } from '../../types';
 
 type Props = {
@@ -9,6 +9,7 @@ type Props = {
 
 export default function TextControl(props: Props) {
   const { x, y, width, height } = props.control.location;
+  const [currentValue, setCurrentValue] = useState(props.control.value);
 
   return (
     <React.Fragment>
@@ -23,14 +24,17 @@ export default function TextControl(props: Props) {
         />
         <foreignObject width={ width } height={ height }>
           <input
-            defaultValue={ props.control.value }
-            onChange={ (e) => { props.onChange({
-              changeType: 'change-text',
-              elementId: props.control.target.id,
-              patch: {
-                value: e.target.value
-              }
-            }); } }
+            defaultValue={ currentValue }
+            onChange={ (e) => {
+              props.onChange({
+                changeType: 'change-text',
+                elementId: props.control.target.id,
+                patch: {
+                  value: e.target.value
+                }
+              });
+              setCurrentValue(e.target.value);
+            } }
             autoFocus={ true }
             style={ {
               textAlign: 'center',

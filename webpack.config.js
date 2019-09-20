@@ -24,7 +24,12 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.pegjs']
+    extensions: ['.ts', '.tsx', '.js', '.pegjs'],
+    alias: {
+      'react': 'preact/compat',
+      'react-dom/test-utils': 'preact/test-utils',
+      'react-dom': 'preact/compat'
+    }
   },
   devServer: {
     contentBase: path.join(__dirname, 'public'),
