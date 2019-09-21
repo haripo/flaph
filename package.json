@@ -4,6 +4,7 @@
   "scripts": {
     "refresh": "lerna clean --yes && lerna bootstrap",
     "dev": "lerna run dev --parallel",
+    "build": "lerna run build",
     "lint": "lerna run lint"
   },
   "devDependencies": {
