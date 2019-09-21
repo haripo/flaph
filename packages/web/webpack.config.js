@@ -1,6 +1,7 @@
 const path = require('path');
 
 module.exports = {
+  devtool: 'inline-source-map',
   entry: './src/index.ts',
   output: {
     filename: 'bundle.js',
@@ -16,20 +17,17 @@ module.exports = {
       {
         test: /\.tsx?$/,
         use: 'ts-loader'
-      },
-      {
-        test: /\.pegjs$/,
-        use: 'pegjs-loader?trace=true&cache=true',
-      },
+      }
     ]
   },
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.pegjs'],
+    extensions: ['.ts', '.tsx', '.js'],
     alias: {
       'react': 'preact/compat',
       'react-dom/test-utils': 'preact/test-utils',
       'react-dom': 'preact/compat'
-    }
+    },
+    symlinks: false
   },
   devServer: {
     contentBase: path.join(__dirname, 'public'),
