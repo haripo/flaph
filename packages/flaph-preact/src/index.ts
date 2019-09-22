@@ -1,8 +1,8 @@
+import { mount, unmount } from 'flaph';
 // @ts-ignore
 import { createElement } from 'preact';
 // @ts-ignore
 import { useEffect, useRef } from 'preact/compat';
-import { mount, unmount } from 'flaph';
 
 type Props = {
   source: string
