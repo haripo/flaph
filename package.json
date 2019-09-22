@@ -5,7 +5,8 @@
     "refresh": "lerna clean --yes && lerna bootstrap",
     "dev": "lerna run dev --parallel",
     "build": "lerna run build",
-    "lint": "lerna run lint"
+    "lint": "lerna run lint",
+    "lint-fix": "lerna run lint -- -- --fix"
   },
   "devDependencies": {
     "lerna": "^3.16.4"
