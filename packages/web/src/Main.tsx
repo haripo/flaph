@@ -1,5 +1,5 @@
+import Flaph from 'flaph-preact';
 import React, { useState } from 'react';
-import Flaph from './Flaph';
 
 const defaultSource = `1: {
   body: Node1
@@ -52,17 +52,16 @@ export default function Main() {
           fontSize: 16
         } }
       />
-      <div style={ {
-        marginLeft: 20,
-        flex: 1
-      } }>
         <Flaph
+          style={{
+            marginLeft: 20,
+            flex: 1
+          }}
           source={ source }
           onChange={ (e) => {
             setSource(e.source);
           } }
         />
-      </div>
     </div>
   );
 }

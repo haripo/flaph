@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { layoutGraph } from '../designers/dagre';
+import { layoutGraph } from '../designers/dagreLayouter';
 import { parse, patch } from '../documenters/simple';
 import { ChangeEvent, ControlProperties } from '../types';
 import ControlLayer from './ControlLayer';
 import GraphLayer from './GraphLayer';
 
-type Props = {
+export type Props = {
   source: string,
   onChange: (e: { source: string }) => void
 };
