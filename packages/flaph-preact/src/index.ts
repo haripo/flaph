@@ -2,8 +2,7 @@
 import { createElement } from 'preact';
 // @ts-ignore
 import { useEffect, useRef } from 'preact/compat';
-
-import { mount } from 'flaph';
+import { mount, unmount } from 'flaph';
 
 type Props = {
   source: string
@@ -13,10 +12,16 @@ type Props = {
 
 export default function Flaph(props: Props) {
   const element = useRef<HTMLDivElement>(null);
+  const reactRef = useRef(null);
 
   useEffect(() => {
-    mount(props, element.current);
-  });
+    mount({ ...props, ref: reactRef }, element.current);
+    return () => unmount(element.current);
+  }, []);
+
+  if (reactRef.current !== null) {
+    reactRef.current.updateSource(props.source);
+  }
 
   return createElement('div', {
     id: 'flaph-preact-root',
