@@ -7,14 +7,14 @@ interface InstallFunction {
 
 // Declare install function executed by Vue.use()
 export let install: InstallFunction = function(Vue) {
-  if (install.installed) return;
+  if (install.installed) { return; }
   install.installed = true;
   Vue.component('Flaph', component);
 };
 
 // Create module definition for Vue.use()
 const plugin = {
-  install,
+  install
 };
 
 // Auto-install when vue is found (eg. in browser via <script> tag)

@@ -6,8 +6,8 @@ import ControlLayer from './ControlLayer';
 import GraphLayer from './GraphLayer';
 
 export interface Props {
-  source: string
-  onChange: (e: { source: string }) => void
+  source: string;
+  onChange: (e: { source: string }) => void;
 }
 
 export default function Flaph(props: Props) {

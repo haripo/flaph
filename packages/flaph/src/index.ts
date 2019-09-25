@@ -3,12 +3,11 @@ import { render, unmountComponentAtNode } from 'react-dom';
 import Flaph, { Props as FlaphProps } from './components/Flaph';
 
 interface Props extends FlaphProps {
-  ref?: Ref<FlaphClassWrapper>
+  ref?: Ref<FlaphClassWrapper>;
 }
-interface State extends FlaphProps {}
 
 // Wrapper component to keep Flaph props as own states, which can be updated via ref
-export class FlaphClassWrapper extends Component<Props, State> {
+export class FlaphClassWrapper extends Component<Props, FlaphProps> {
   constructor(props) {
     super(props);
     this.state = props;
