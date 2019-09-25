@@ -1,9 +1,14 @@
-import { Component, createElement } from 'react';
+import { Component, createElement, Ref } from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
-import Flaph, { Props } from './components/Flaph';
+import Flaph, { Props as FlaphProps } from './components/Flaph';
+
+interface Props extends FlaphProps {
+  ref?: Ref<FlaphClassWrapper>
+}
+interface State extends FlaphProps {}
 
 // Wrapper component to keep Flaph props as own states, which can be updated via ref
-class FlaphClassWrapper extends Component<Props, Props> {
+export class FlaphClassWrapper extends Component<Props, State> {
   constructor(props) {
     super(props);
     this.state = props;

@@ -1,11 +1,16 @@
-import component from './flaph.ts';
+import component from './flaph';
+
+interface InstallFunction {
+  (Vue: any): void;
+  installed?: boolean;
+}
 
 // Declare install function executed by Vue.use()
-export function install(Vue) {
+export let install: InstallFunction = function(Vue) {
   if (install.installed) return;
   install.installed = true;
   Vue.component('Flaph', component);
-}
+};
 
 // Create module definition for Vue.use()
 const plugin = {
@@ -15,8 +20,10 @@ const plugin = {
 // Auto-install when vue is found (eg. in browser via <script> tag)
 let GlobalVue = null;
 if (typeof window !== 'undefined') {
+  // @ts-ignore
   GlobalVue = window.Vue;
 } else if (typeof global !== 'undefined') {
+  // @ts-ignore
   GlobalVue = global.Vue;
 }
 if (GlobalVue) {

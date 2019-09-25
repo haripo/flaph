@@ -1,18 +1,19 @@
-import { mount, unmount } from 'flaph';
+import { mount, unmount, FlaphClassWrapper } from 'flaph';
 // @ts-ignore
 import { createElement } from 'preact';
 // @ts-ignore
 import { useEffect, useRef } from 'preact/compat';
+import { CSSProperties } from 'react';
 
-type Props = {
+interface Props {
   source: string
   onChange: (e: { source: string }) => void
-  style: { [key: string]: string | number }
-};
+  style?: CSSProperties
+}
 
 export default function Flaph(props: Props) {
   const element = useRef<HTMLDivElement>(null);
-  const reactRef = useRef(null);
+  const reactRef = useRef<FlaphClassWrapper>(null);
 
   useEffect(() => {
     mount({ ...props, ref: reactRef }, element.current);

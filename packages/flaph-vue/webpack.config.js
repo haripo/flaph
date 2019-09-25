@@ -1,10 +1,10 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './src/index.ts',
   devtool: process.env.NODE_ENV === 'development' ? 'inline-source-map' : false,
   output: {
-    filename: 'bundle.js',
+    filename: 'index.js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: 'dist',
     library: 'flaph-vue',

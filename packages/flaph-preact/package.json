@@ -2,7 +2,8 @@
   "name": "flaph-preact",
   "version": "0.0.1",
   "description": "Fluid graph drawing toolkit",
-  "main": "dist/bundle.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "repository": "https://github.com/haripo/flaph",
   "scripts": {
     "build": "webpack --config webpack.config.js --mode production",

@@ -5,10 +5,10 @@ import { ChangeEvent, ControlProperties } from '../types';
 import ControlLayer from './ControlLayer';
 import GraphLayer from './GraphLayer';
 
-export type Props = {
-  source: string,
+export interface Props {
+  source: string
   onChange: (e: { source: string }) => void
-};
+}
 
 export default function Flaph(props: Props) {
   const [control, setControl] = useState<ControlProperties | null>(null);
