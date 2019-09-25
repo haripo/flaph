@@ -1,14 +1,10 @@
-import { mount, unmount, FlaphClassWrapper } from 'flaph';
-// @ts-ignore
-import { createElement } from 'preact';
-// @ts-ignore
-import { useEffect, useRef } from 'preact/compat';
-import { CSSProperties } from 'react';
+import { FlaphClassWrapper, mount, unmount } from 'flaph';
+import { createElement, CSSProperties, useEffect, useRef } from 'react';
 
 interface Props {
-  source: string
-  onChange: (e: { source: string }) => void
-  style?: CSSProperties
+  source: string;
+  onChange: (e: { source: string }) => void;
+  style?: CSSProperties;
 }
 
 export default function Flaph(props: Props) {

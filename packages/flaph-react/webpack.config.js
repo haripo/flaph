@@ -27,6 +27,7 @@ module.exports = {
     symlinks: false
   },
   externals: {
+    'react': 'react',
     'preact': 'preact',
     'preact/compat': 'preact/compat'
   }

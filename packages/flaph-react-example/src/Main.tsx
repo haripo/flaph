@@ -1,4 +1,4 @@
-import Flaph from 'flaph-preact';
+import Flaph from 'flaph-react';
 import React, { useState } from 'react';
 
 const defaultSource = `1: {

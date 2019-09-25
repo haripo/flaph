@@ -1,5 +1,5 @@
 {
-  "name": "flaph-preact",
+  "name": "flaph-react",
   "version": "0.0.1",
   "description": "Fluid graph drawing toolkit",
   "main": "dist/index.js",
@@ -31,7 +31,8 @@
     "webpack-cli": "^3.3.6"
   },
   "peerDependencies": {
-    "preact": "^10.0.0-rc.3"
+    "react": "optional:*",
+    "preact": "optional:^10"
   },
   "dependencies": {
     "flaph": "^0.0.1"
