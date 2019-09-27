@@ -1,6 +1,10 @@
 name: Build gh-pages
 
-on: [push]
+on:
+  push:
+    branches:
+    - master
+    - pages/*
 
 jobs:
   build:
