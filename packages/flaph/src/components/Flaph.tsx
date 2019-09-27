@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { CSSProperties, useState } from 'react';
 import { layoutGraph } from '../designers/dagreLayouter';
 import { parse, patch } from '../documenters/simple';
 import { ChangeEvent, ControlProperties } from '../types';
@@ -7,6 +7,7 @@ import GraphLayer from './GraphLayer';
 
 export interface Props {
   source: string;
+  style?: CSSProperties;
   onChange: (e: { source: string }) => void;
 }
 
@@ -34,9 +35,8 @@ export default function Flaph(props: Props) {
   return (
     <div
       style={ {
-        position: 'relative',
-        width: '100%',
-        height: '100%'
+        ...props.style,
+        position: 'relative'
       } }
     >
       <div

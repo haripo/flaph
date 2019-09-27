@@ -3,11 +3,13 @@ import { render, unmountComponentAtNode } from 'react-dom';
 import Flaph, { Props as FlaphProps } from './components/Flaph';
 
 interface Props extends FlaphProps {
-  ref?: Ref<FlaphClassWrapper>;
+  ref?: Ref<InternalFlaphClassWrapper>;
 }
 
+export default Flaph;
+
 // Wrapper component to keep Flaph props as own states, which can be updated via ref
-export class FlaphClassWrapper extends Component<Props, FlaphProps> {
+class InternalFlaphClassWrapper extends Component<Props, FlaphProps> {
   constructor(props) {
     super(props);
     this.state = props;
@@ -24,7 +26,7 @@ export class FlaphClassWrapper extends Component<Props, FlaphProps> {
 }
 
 export function mount(props: Props, element) {
-  render(createElement(FlaphClassWrapper, props), element);
+  render(createElement(InternalFlaphClassWrapper, props), element);
 }
 
 export function unmount(element) {

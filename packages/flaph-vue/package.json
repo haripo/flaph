@@ -36,6 +36,7 @@
     "vue": "^2"
   },
   "dependencies": {
-    "flaph": "^0.0.1"
+    "flaph": "^0.0.1",
+    "preact": "^10.0.0-rc.3"
   }
 }
