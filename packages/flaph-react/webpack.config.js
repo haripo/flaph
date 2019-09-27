@@ -7,7 +7,7 @@ module.exports = {
     filename: 'index.js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: 'dist',
-    library: 'flaph-preact',
+    library: 'flaph-react',
     libraryTarget: 'umd'
   },
   module: {

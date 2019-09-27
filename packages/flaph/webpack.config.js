@@ -8,7 +8,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     publicPath: 'dist',
     library: 'flaph',
-    libraryTarget: 'commonjs2'
+    libraryTarget: 'umd'
   },
   module: {
     rules: [

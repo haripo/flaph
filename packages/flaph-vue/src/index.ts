@@ -1,4 +1,4 @@
-import component from './flaph';
+import component from './component';
 
 interface InstallFunction {
   (Vue: any): void;
