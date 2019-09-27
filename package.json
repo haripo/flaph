@@ -2,7 +2,7 @@
   "name": "flaph",
   "private": true,
   "scripts": {
-    "refresh": "lerna clean --yes && lerna bootstrap",
+    "refresh": "lerna clean --yes && lerna bootstrap --hoist",
     "dev": "lerna run dev --parallel",
     "build": "lerna run build",
     "lint": "lerna run lint",
