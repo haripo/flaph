@@ -1,6 +1,7 @@
 export interface Node {
   id: string;
   layer?: number;
+  order?: number;
 }
 
 export interface Edge {
@@ -9,8 +10,9 @@ export interface Edge {
 }
 
 export interface Graph {
-  nodes: Node[]
-  edges: Edge[]
+  nodes: Node[];
+  edges: Edge[];
+  numLayer?: number;
 }
 
 function incomingEdges(graph: Graph, targetNode: string) {
@@ -87,4 +89,64 @@ export function longestPathLayerAssignment(graph: Graph): Graph {
       nodesInCurrentLayer.clear();
     }
   }
+
+  graph.numLayer = layer;
+  return graph;
+}
+
+export function orderNodes(graph: Graph): Graph {
+  function median() {
+    for (let i = 1; i < graph.numLayer; i++) {
+      for (const node of graph.nodes.filter((n) => n.layer === i)) {
+        const prevNodes = new Set(graph.nodes
+          .filter((n) => n.layer === i - 1)
+          .map((n) => n.id));
+        const linkedPrevNodes = graph.edges
+          .filter((e) => prevNodes.has(e.from) && e.to === node.id)
+          .map((e) => e.from);
+        const prevOrders = linkedPrevNodes
+          .map((n) => graph.nodes.find((nn) => nn.id === n).order);
+        const med = prevOrders[Math.floor(prevOrders.length / 2)];
+
+        if (med !== undefined) {
+          node.order = med;
+        }
+      }
+    }
+  }
+
+  function revMedian() {
+    for (let i = graph.numLayer - 2; i >= 0; i--) {
+      for (const node of graph.nodes.filter((n) => n.layer === i)) {
+        const prevNodes = new Set(graph.nodes
+          .filter((n) => n.layer === i + 1)
+          .map((n) => n.id));
+        const linkedPrevNodes = graph.edges
+          .filter((e) => prevNodes.has(e.to) && e.from === node.id)
+          .map((e) => e.to);
+        const prevOrders = linkedPrevNodes
+          .map((n) => graph.nodes.find((nn) => nn.id === n).order);
+        const med = prevOrders[Math.floor(prevOrders.length / 2)];
+
+        if (med !== undefined) {
+          node.order = med;
+        }
+      }
+    }
+  }
+
+  let tmp = {};
+  for (const node of graph.nodes) {
+    if (tmp[node.layer] === undefined) {
+      tmp[node.layer] = 0;
+    }
+    node.order = tmp[node.layer];
+    tmp[node.layer]++;
+  }
+
+  median();
+  revMedian();
+  median();
+
+  return graph;
 }

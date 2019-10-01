@@ -1,4 +1,3 @@
-import { removeCycles, Graph } from '../src/designers/sugiyamaLayouter';
 import { removeCycles, Graph, longestPathLayerAssignment, orderNodes } from '../src/designers/sugiyamaLayouter';
 
 describe('removeCycles', () => {
@@ -47,6 +46,8 @@ describe('removeCycles', () => {
     expect(result.nodes).toBe(graph.nodes);
     expect(result.edges).toHaveLength(4);
   });
+});
+
 
 describe('longestPathLayerAssignment', () => {
   test('simple graph', () => {
@@ -61,8 +62,8 @@ describe('longestPathLayerAssignment', () => {
         { from: 'b', to: 'c' }
       ]
     };
+
     const result = longestPathLayerAssignment(graph);
-    console.log(result);
     expect(result.nodes[0].layer).toBe(0);
     expect(result.nodes[1].layer).toBe(1);
     expect(result.nodes[2].layer).toBe(2);
@@ -87,8 +88,8 @@ describe('longestPathLayerAssignment', () => {
         { from: 'a', to: 'd' }
       ]
     };
+
     const result = longestPathLayerAssignment(graph);
-    console.log(result);
     expect(result.nodes[0].layer).toBe(0);
     expect(result.nodes[1].layer).toBe(1);
     expect(result.nodes[2].layer).toBe(2);
@@ -99,4 +100,56 @@ describe('longestPathLayerAssignment', () => {
   });
 });
 
+
+describe('orderNodes', () => {
+  test('simple graph', () => {
+    const graph: Graph = {
+      nodes: [
+        { id: 'a', layer: 0 },
+        { id: 'b', layer: 1 },
+        { id: 'c', layer: 2 }
+      ],
+      edges: [
+        { from: 'a', to: 'b' },
+        { from: 'b', to: 'c' }
+      ],
+      numLayer: 3
+    };
+
+    const result = orderNodes(graph);
+    expect(result.nodes[0].order).toBe(0);
+    expect(result.nodes[0].order).toBe(0);
+    expect(result.nodes[0].order).toBe(0);
+  });
+
+  test('complex graph', () => {
+    const graph: Graph = {
+      nodes: [
+        { id: 'a', layer: 0 },
+        { id: 'b', layer: 1 },
+        { id: 'c', layer: 2 },
+        { id: 'd', layer: 3 },
+        { id: 'e', layer: 1 },
+        { id: 'f', layer: 0 },
+        { id: 'g', layer: 0 }
+      ],
+      edges: [
+        { from: 'a', to: 'b' },
+        { from: 'b', to: 'c' },
+        { from: 'c', to: 'd' },
+        { from: 'f', to: 'e' },
+        { from: 'a', to: 'd' }
+      ],
+      numLayer: 4
+    };
+
+    const result = orderNodes(graph);
+    expect(result.nodes[0].order).toBe(0);
+    expect(result.nodes[1].order).toBe(0);
+    expect(result.nodes[2].order).toBe(0);
+    expect(result.nodes[3].order).toBe(0);
+    expect(result.nodes[4].order).toBe(1);
+    expect(result.nodes[5].order).toBe(1);
+    expect(result.nodes[6].order).toBe(2);
+  });
 });
