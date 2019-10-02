@@ -1,3 +1,5 @@
+import { EdgeGraphElement, EdgeLayoutElement, GraphModel, Layout, NodeGraphElement, NodeLayoutElement } from '../types';
+
 export interface Node {
   id: string;
   layer?: number;
@@ -5,6 +7,7 @@ export interface Node {
 }
 
 export interface Edge {
+  id: string;
   from: string;
   to: string;
 }
@@ -106,9 +109,13 @@ export function orderNodes(graph: Graph): Graph {
           .map((e) => e.from);
         const prevOrders = linkedPrevNodes
           .map((n) => graph.nodes.find((nn) => nn.id === n).order);
-        const med = prevOrders[Math.floor(prevOrders.length / 2)];
+        let med = prevOrders[Math.floor(prevOrders.length / 2)];
 
         if (med !== undefined) {
+          node.order = -1;
+          while (graph.nodes.find(n => (n.order === med && n.layer === i))) {
+            med++;
+          }
           node.order = med;
         }
       }
@@ -126,9 +133,13 @@ export function orderNodes(graph: Graph): Graph {
           .map((e) => e.to);
         const prevOrders = linkedPrevNodes
           .map((n) => graph.nodes.find((nn) => nn.id === n).order);
-        const med = prevOrders[Math.floor(prevOrders.length / 2)];
+        let med = prevOrders[Math.floor(prevOrders.length / 2)];
 
         if (med !== undefined) {
+          node.order = -1;
+          while (graph.nodes.find(n => (n.order === med && n.layer === i))) {
+            med++;
+          }
           node.order = med;
         }
       }
@@ -149,4 +160,63 @@ export function orderNodes(graph: Graph): Graph {
   median();
 
   return graph;
+}
+
+export function layoutGraph(graphModel: GraphModel): Layout {
+  let graph: Graph = {
+    nodes: [],
+    edges: []
+  };
+
+  for (const element of Object.values(graphModel)) {
+    if (element.type === 'node') {
+      graph.nodes.push({ id: element.id });
+    }
+    if (element.type === 'edge') {
+      graph.edges.push({
+        id: element.id,
+        from: element.properties.from,
+        to: element.properties.to
+      });
+    }
+  }
+
+  graph = removeCycles(graph);
+  graph = longestPathLayerAssignment(graph);
+  graph = orderNodes(graph);
+
+  const nodes: NodeLayoutElement[] = graph.nodes
+    .map((v) => {
+      const model = graphModel[v.id] as NodeGraphElement;
+      return {
+        id: model.id,
+        model,
+        type: 'node',
+        location: {
+          width: 100,
+          height: 100,
+          x: v.order * (100 + 10) + 10,
+          y: v.layer * (100 + 10) + 10
+        }
+      };
+    });
+
+  const edges: EdgeLayoutElement[] = graph.edges
+    .map((e) => {
+      const model = graphModel[e.id] as EdgeGraphElement;
+      return {
+        id: model.id,
+        model,
+        type: 'edge',
+        location: [
+
+        ]
+      };
+    });
+
+  const result = {};
+  for (const element of [...nodes, ...edges]) {
+    result[element.id] = element;
+  }
+  return result;
 }

@@ -9,9 +9,9 @@ describe('removeCycles', () => {
         { id: 'c' }
       ],
       edges: [
-        { from: 'a', to: 'b' },
-        { from: 'b', to: 'c' },
-        { from: 'c', to: 'a' }
+        { id: '0', from: 'a', to: 'b' },
+        { id: '1', from: 'b', to: 'c' },
+        { id: '2', from: 'c', to: 'a' }
       ]
     };
     const result = removeCycles(graph);
@@ -31,15 +31,15 @@ describe('removeCycles', () => {
         { id: 'g' }
       ],
       edges: [
-        { from: 'a', to: 'b' },
-        { from: 'b', to: 'c' },
-        { from: 'c', to: 'd' },
+        { id: '0', from: 'a', to: 'b' },
+        { id: '1', from: 'b', to: 'c' },
+        { id: '2', from: 'c', to: 'd' },
 
-        { from: 'f', to: 'e' },
-        { from: 'e', to: 'f' },
+        { id: '3', from: 'f', to: 'e' },
+        { id: '4', from: 'e', to: 'f' },
 
-        { from: 'd', to: 'd' },
-        { from: 'd', to: 'b' },
+        { id: '5', from: 'd', to: 'd' },
+        { id: '6', from: 'd', to: 'b' },
       ]
     };
     const result = removeCycles(graph);
@@ -58,8 +58,8 @@ describe('longestPathLayerAssignment', () => {
         { id: 'c' }
       ],
       edges: [
-        { from: 'a', to: 'b' },
-        { from: 'b', to: 'c' }
+        { id: '0', from: 'a', to: 'b' },
+        { id: '1', from: 'b', to: 'c' }
       ]
     };
 
@@ -81,11 +81,11 @@ describe('longestPathLayerAssignment', () => {
         { id: 'g' }
       ],
       edges: [
-        { from: 'a', to: 'b' },
-        { from: 'b', to: 'c' },
-        { from: 'c', to: 'd' },
-        { from: 'f', to: 'e' },
-        { from: 'a', to: 'd' }
+        { id: '', from: 'a', to: 'b' },
+        { id: '', from: 'b', to: 'c' },
+        { id: '', from: 'c', to: 'd' },
+        { id: '', from: 'f', to: 'e' },
+        { id: '', from: 'a', to: 'd' }
       ]
     };
 
@@ -110,8 +110,8 @@ describe('orderNodes', () => {
         { id: 'c', layer: 2 }
       ],
       edges: [
-        { from: 'a', to: 'b' },
-        { from: 'b', to: 'c' }
+        { id: '', from: 'a', to: 'b' },
+        { id: '', from: 'b', to: 'c' }
       ],
       numLayer: 3
     };
@@ -134,11 +134,11 @@ describe('orderNodes', () => {
         { id: 'g', layer: 0 }
       ],
       edges: [
-        { from: 'a', to: 'b' },
-        { from: 'b', to: 'c' },
-        { from: 'c', to: 'd' },
-        { from: 'f', to: 'e' },
-        { from: 'a', to: 'd' }
+        { id: '', from: 'a', to: 'b' },
+        { id: '', from: 'b', to: 'c' },
+        { id: '', from: 'c', to: 'd' },
+        { id: '', from: 'f', to: 'e' },
+        { id: '', from: 'a', to: 'd' }
       ],
       numLayer: 4
     };
