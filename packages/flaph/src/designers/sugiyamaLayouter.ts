@@ -1,4 +1,12 @@
-import { EdgeGraphElement, EdgeLayoutElement, GraphModel, Layout, NodeGraphElement, NodeLayoutElement } from '../types';
+import {
+  BoxLocation,
+  EdgeGraphElement,
+  EdgeLayoutElement,
+  GraphModel,
+  Layout,
+  NodeGraphElement,
+  NodeLayoutElement
+} from '../types';
 
 export interface Node {
   id: string;
@@ -208,9 +216,10 @@ export function layoutGraph(graphModel: GraphModel): Layout {
         id: model.id,
         model,
         type: 'edge',
-        location: [
-
-        ]
+        location: clipEdgeByRect([
+          center(nodes.find(n => n.id === model.properties.from).location),
+          center(nodes.find(n => n.id === model.properties.to).location)
+        ])
       };
     });
 
@@ -220,3 +229,37 @@ export function layoutGraph(graphModel: GraphModel): Layout {
   }
   return result;
 }
+
+// helper functions
+
+function clamp(value: number, lower: number, upper: number) {
+  return Math.min(Math.max(value, lower), upper);
+}
+
+function clipEdgeByRect([x, y]: BoxLocation[]) {
+  function clip([a, b]: BoxLocation[]) {
+    const dx = clamp(
+      (a.x - b.x) * a.height / (2 * Math.abs(b.y - a.y)),
+      -a.width / 2,
+      a.width / 2);
+    const dy = clamp(
+      (a.y - b.y) * a.width / (2 * Math.abs(b.x - a.x)),
+      -a.height / 2,
+      a.height / 2);
+    a.x -= dx;
+    a.y -= dy;
+    return [a, b];
+  }
+
+  return clip(clip([x, y]).reverse());
+}
+
+function center(location: BoxLocation) {
+  return {
+    x: location.x + location.width / 2,
+    y: location.y + location.height / 2,
+    width: location.width,
+    height: location.height
+  }
+}
+
