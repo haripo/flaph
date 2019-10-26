@@ -166,6 +166,10 @@ export function orderNodes(graph: Graph): Graph {
   median();
   revMedian();
   median();
+  revMedian();
+  median();
+  revMedian();
+  median();
 
   return graph;
 }
@@ -193,6 +197,33 @@ export function layoutGraph(graphModel: GraphModel): Layout {
   graph = longestPathLayerAssignment(graph);
   graph = orderNodes(graph);
 
+  const defaultHeight = 50;
+  const defaultWidth = 50;
+  const nodeMargin = 50;
+
+  const findNode = (nodeId: string) => graphModel[nodeId] as NodeGraphElement;
+  const nodeYCenters = [];
+  for (let i = 0; i < graph.numLayer; i++) {
+    const maxHeight = graph.nodes
+      .filter(node => node.layer === i)
+      .map(node => node.id)
+      .map(findNode)
+      .map(n => n.properties.height || defaultHeight)
+      .reduce((a, b) => a > b ? a : b, 0);
+    nodeYCenters.push(maxHeight || 0);
+  }
+
+  const nodeXCenters = [];
+  for (let i = 0; i < graph.nodes.map(n => n.order).reduce((a, b) => a > b ? a : b); i++) {
+    const maxWidth = graph.nodes
+      .filter(node => node.order === i)
+      .map(node => node.id)
+      .map(findNode)
+      .map(n => n.properties.width || defaultWidth)
+      .reduce((a, b) => a > b ? a : b, 0);
+    nodeXCenters.push(maxWidth || 0);
+  }
+
   const nodes: NodeLayoutElement[] = graph.nodes
     .map((v) => {
       const model = graphModel[v.id] as NodeGraphElement;
@@ -201,10 +232,10 @@ export function layoutGraph(graphModel: GraphModel): Layout {
         model,
         type: 'node',
         location: {
-          width: 100,
-          height: 100,
-          x: v.order * (100 + 10) + 10,
-          y: v.layer * (100 + 10) + 10
+          width: model.properties.width || defaultWidth,
+          height: model.properties.height || defaultHeight,
+          x: nodeXCenters.slice(0, v.order).reduce((a, b) => a + b + nodeMargin, nodeMargin),
+          y: nodeYCenters.slice(0, v.layer).reduce((a, b) => a + b + nodeMargin, nodeMargin)
         }
       };
     });
@@ -217,8 +248,8 @@ export function layoutGraph(graphModel: GraphModel): Layout {
         model,
         type: 'edge',
         location: clipEdgeByRect([
-          center(nodes.find(n => n.id === model.properties.from).location),
-          center(nodes.find(n => n.id === model.properties.to).location)
+          center(nodes.find(n => n.id === model.properties.to).location),
+          center(nodes.find(n => n.id === model.properties.from).location)
         ])
       };
     });
@@ -246,8 +277,8 @@ function clipEdgeByRect([x, y]: BoxLocation[]) {
       (a.y - b.y) * a.width / (2 * Math.abs(b.x - a.x)),
       -a.height / 2,
       a.height / 2);
-    a.x -= dx;
-    a.y -= dy;
+    a.x -= dx || 0;
+    a.y -= dy || 0;
     return [a, b];
   }
 
