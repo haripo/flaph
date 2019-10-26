@@ -30,6 +30,10 @@ const defaultSource = `1: {
 @constraint.horizontal: {
   nodes: 2,3
 }
+
+@constraint.vertical: {
+  nodes: 2,5
+}
 `;
 
 export default function Main() {

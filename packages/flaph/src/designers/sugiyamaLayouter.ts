@@ -23,7 +23,13 @@ export interface Edge {
 export interface Graph {
   nodes: Node[];
   edges: Edge[];
+  constraints: LayerConstraint;
   numLayer?: number;
+}
+
+export interface LayerConstraint {
+  alignHorizontal: { [baseNode: string]: string[] };
+  alignVertical: { [baseNode: string]: string[] };
 }
 
 function incomingEdges(graph: Graph, targetNode: string) {
@@ -79,9 +85,22 @@ export function longestPathLayerAssignment(graph: Graph): Graph {
   }
 
   // find node which is not assigned to layer, and incoming only from past layer
+  let nextQueue = [];
+
   function findNextNode() {
+    if (nextQueue.length > 0) {
+      const id = nextQueue.pop();
+      return graph.nodes.find(n => n.id === id);
+    }
     for (const node of graph.nodes) {
-      if (node.layer === undefined && isNodeIncomingOnlyFromPastLayer(node.id)) {
+      if (node.layer !== undefined) {
+        continue;
+      }
+
+      if (isNodeIncomingOnlyFromPastLayer(node.id)) {
+        if (graph.constraints.alignHorizontal[node.id] !== undefined) {
+          nextQueue.push(...graph.constraints.alignHorizontal[node.id]);
+        }
         return node;
       }
     }
@@ -106,6 +125,25 @@ export function longestPathLayerAssignment(graph: Graph): Graph {
 }
 
 export function orderNodes(graph: Graph): Graph {
+  function moveNode(node: Node, order: number, layer: number) {
+    node.order = -1;
+    while (graph.nodes.find(n => (n.order === order && n.layer === layer))) {
+      order++;
+    }
+    node.order = order;
+  }
+
+  function moveNodeForce(node: Node, order: number, layer: number) {
+    while (true) {
+      const conflict = graph.nodes.find(n => (n.order === order && n.layer === layer));
+      if (conflict === undefined) {
+        break;
+      }
+      moveNodeForce(conflict, conflict.order + 1, conflict.layer);
+    }
+    node.order = order;
+  }
+
   function median() {
     for (let i = 1; i < graph.numLayer; i++) {
       for (const node of graph.nodes.filter((n) => n.layer === i)) {
@@ -120,15 +158,24 @@ export function orderNodes(graph: Graph): Graph {
         let med = prevOrders[Math.floor(prevOrders.length / 2)];
 
         if (med !== undefined) {
-          node.order = -1;
-          while (graph.nodes.find(n => (n.order === med && n.layer === i))) {
-            med++;
+          moveNode(node, med, i);
+        }
+      }
+    }
+
+    // force constraint
+    for (const node of graph.nodes) {
+      if (graph.constraints.alignVertical[node.id]) {
+        for (const otherNodeId of graph.constraints.alignVertical[node.id]) {
+          const otherNode = graph.nodes.find(n => n.id === otherNodeId);
+          if (otherNode !== undefined) {
+            moveNodeForce(otherNode, node.order, otherNode.layer);
           }
-          node.order = med;
         }
       }
     }
   }
+
 
   function revMedian() {
     for (let i = graph.numLayer - 2; i >= 0; i--) {
@@ -144,11 +191,7 @@ export function orderNodes(graph: Graph): Graph {
         let med = prevOrders[Math.floor(prevOrders.length / 2)];
 
         if (med !== undefined) {
-          node.order = -1;
-          while (graph.nodes.find(n => (n.order === med && n.layer === i))) {
-            med++;
-          }
-          node.order = med;
+          moveNode(node, med, i);
         }
       }
     }
@@ -177,7 +220,11 @@ export function orderNodes(graph: Graph): Graph {
 export function layoutGraph(graphModel: GraphModel): Layout {
   let graph: Graph = {
     nodes: [],
-    edges: []
+    edges: [],
+    constraints: {
+      alignHorizontal: {},
+      alignVertical: {}
+    }
   };
 
   for (const element of Object.values(graphModel)) {
@@ -190,6 +237,16 @@ export function layoutGraph(graphModel: GraphModel): Layout {
         from: element.properties.from,
         to: element.properties.to
       });
+    }
+    if (element.type === 'constraint') {
+      const first = element.properties.nodes[0];
+      const rest = element.properties.nodes.slice(1);
+      if (element.properties.axis === 'horizontal') {
+        graph.constraints.alignHorizontal[first] = rest;
+      }
+      if (element.properties.axis === 'vertical') {
+        graph.constraints.alignVertical[first] = rest;
+      }
     }
   }
 

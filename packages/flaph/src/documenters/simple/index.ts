@@ -34,10 +34,17 @@ export function parse(graphSource: string): ParseResult {
 
     for (const e of parsed) {
       if (e.id.startsWith('@constraint')) {
-        // model.push({
-        //   id: e.id,
-        //   type: 'constraint'
-        // });
+        const constraintType = e.id.split('.')[1];
+        model[e.id] = {
+          id: e.id,
+          type: 'constraint',
+          properties: {
+            axis: constraintType,
+            nodes: e.properties.nodes.split(',')
+          },
+          controlProperties: {
+          }
+        };
       } else {
         model[e.id] = {
           id: e.id,

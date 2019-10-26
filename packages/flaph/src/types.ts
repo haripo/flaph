@@ -30,7 +30,17 @@ export type EdgeGraphElement = GraphModelElementBase & {
   }
 };
 
-export type GraphElement = NodeGraphElement | EdgeGraphElement;
+export type ConstraintGraphElement = GraphModelElementBase & {
+  type: 'constraint'
+  properties: {
+    axis: 'horizontal' | 'vertical'
+    nodes: string[]
+  }
+  controlProperties: {
+  }
+};
+
+export type GraphElement = NodeGraphElement | EdgeGraphElement | ConstraintGraphElement;
 export type GraphModel = { [id: string]: GraphElement };
 
 export type GraphSourceMap = {

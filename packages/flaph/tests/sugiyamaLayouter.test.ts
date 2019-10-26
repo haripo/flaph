@@ -12,7 +12,11 @@ describe('removeCycles', () => {
         { id: '0', from: 'a', to: 'b' },
         { id: '1', from: 'b', to: 'c' },
         { id: '2', from: 'c', to: 'a' }
-      ]
+      ],
+      constraints: {
+        alignVertical: {},
+        alignHorizontal: {}
+      }
     };
     const result = removeCycles(graph);
     expect(result.nodes).toBe(graph.nodes);
@@ -40,7 +44,11 @@ describe('removeCycles', () => {
 
         { id: '5', from: 'd', to: 'd' },
         { id: '6', from: 'd', to: 'b' },
-      ]
+      ],
+      constraints: {
+        alignVertical: {},
+        alignHorizontal: {}
+      }
     };
     const result = removeCycles(graph);
     expect(result.nodes).toBe(graph.nodes);
@@ -60,7 +68,11 @@ describe('longestPathLayerAssignment', () => {
       edges: [
         { id: '0', from: 'a', to: 'b' },
         { id: '1', from: 'b', to: 'c' }
-      ]
+      ],
+      constraints: {
+        alignVertical: {},
+        alignHorizontal: {}
+      }
     };
 
     const result = longestPathLayerAssignment(graph);
@@ -86,7 +98,11 @@ describe('longestPathLayerAssignment', () => {
         { id: '', from: 'c', to: 'd' },
         { id: '', from: 'f', to: 'e' },
         { id: '', from: 'a', to: 'd' }
-      ]
+      ],
+      constraints: {
+        alignVertical: {},
+        alignHorizontal: {}
+      }
     };
 
     const result = longestPathLayerAssignment(graph);
@@ -113,7 +129,11 @@ describe('orderNodes', () => {
         { id: '', from: 'a', to: 'b' },
         { id: '', from: 'b', to: 'c' }
       ],
-      numLayer: 3
+      numLayer: 3,
+      constraints: {
+        alignVertical: {},
+        alignHorizontal: {}
+      }
     };
 
     const result = orderNodes(graph);
@@ -140,7 +160,11 @@ describe('orderNodes', () => {
         { id: '', from: 'f', to: 'e' },
         { id: '', from: 'a', to: 'd' }
       ],
-      numLayer: 4
+      numLayer: 4,
+      constraints: {
+        alignVertical: {},
+        alignHorizontal: {}
+      }
     };
 
     const result = orderNodes(graph);
