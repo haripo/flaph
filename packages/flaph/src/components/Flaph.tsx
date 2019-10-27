@@ -1,5 +1,6 @@
 import React, { CSSProperties, useState } from 'react';
-import { layoutGraph } from '../designers/dagreLayouter';
+// import { layoutGraph } from '../designers/dagreLayouter';
+import { layoutGraph } from '../designers/sugiyamaLayouter';
 import { parse, patch } from '../documenters/simple';
 import { ChangeEvent, ControlProperties } from '../types';
 import ControlLayer from './ControlLayer';

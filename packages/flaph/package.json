@@ -9,7 +9,7 @@
     "build": "webpack --config webpack.config.js --mode production",
     "dev": "webpack --watch --mode development",
     "lint": "npx tslint -c tslint.json 'src/**/*.ts' 'src/**/*.tsx'",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "keywords": [
     "graph"
@@ -21,13 +21,16 @@
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-react": "^7.0.0",
     "@types/dagre": "^0.7.42",
+    "@types/jest": "^24.0.18",
     "@types/pegjs": "^0.10.1",
     "@types/react": "^16.8.23",
     "@types/react-dom": "^16.8.5",
     "babel-loader": "^8.0.6",
+    "jest": "^24.9.0",
     "lerna": "^3.16.4",
     "pegjs-loader": "^0.5.5",
     "raw-loader": "^3.1.0",
+    "ts-jest": "^24.1.0",
     "ts-loader": "^6.0.4",
     "tslint": "^5.18.0",
     "typescript": "^3.5.3",
@@ -40,7 +43,10 @@
     "pegjs": "^0.11.0-master"
   },
   "peerDependencies": {
-    "react": "optional:^16.8",
-    "preact": "optional:^10"
+    "preact": "optional:^10",
+    "react": "optional:^16.8"
+  },
+  "jest": {
+    "preset": "ts-jest"
   }
 }
