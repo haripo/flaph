@@ -23,8 +23,8 @@ export interface Edge {
 export interface Graph {
   nodes: Node[];
   edges: Edge[];
-  virtualEdges: Edge[];
   constraints: LayerConstraint;
+  virtualEdges?: Edge[];
   numLayer?: number;
 }
 
@@ -257,7 +257,9 @@ export function layoutGraph(graphModel: GraphModel): Layout {
   graph = longestPathLayerAssignment(graph);
   graph = orderNodes(graph);
 
-  graph.edges.push(...graph.virtualEdges);
+  if (graph.virtualEdges) {
+    graph.edges.push(...graph.virtualEdges);
+  }
 
   const defaultHeight = 50;
   const defaultWidth = 50;
