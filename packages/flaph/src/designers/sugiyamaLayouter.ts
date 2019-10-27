@@ -23,6 +23,7 @@ export interface Edge {
 export interface Graph {
   nodes: Node[];
   edges: Edge[];
+  virtualEdges: Edge[];
   constraints: LayerConstraint;
   numLayer?: number;
 }
@@ -55,6 +56,7 @@ export function removeCycles(graph: Graph) {
     for (const edge of outgoingEdges(graph, targetNode)) {
       if (stack.has(edge.to)) {
         graph.edges = graph.edges.filter(e => e !== edge);
+        graph.virtualEdges.push(edge);
       } else if (!marked.has(edge.to)) {
         dfs(edge.to);
       }
@@ -221,6 +223,7 @@ export function layoutGraph(graphModel: GraphModel): Layout {
   let graph: Graph = {
     nodes: [],
     edges: [],
+    virtualEdges: [],
     constraints: {
       alignHorizontal: {},
       alignVertical: {}
@@ -253,6 +256,8 @@ export function layoutGraph(graphModel: GraphModel): Layout {
   graph = removeCycles(graph);
   graph = longestPathLayerAssignment(graph);
   graph = orderNodes(graph);
+
+  graph.edges.push(...graph.virtualEdges);
 
   const defaultHeight = 50;
   const defaultWidth = 50;
